@@ -3,14 +3,14 @@
   "description": "My personal website",
   "version": "0.0.0",
   "author": {
-    "name": "Josh Jacobson",
-    "email": "joshjacobson14@gmail.com",
+    "name": "Felipe Slaughter-Quintero",
+    "email": "fslauq@gmail.com",
     "url": "https://joshjacobsonmusic.com"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/josh-jacobson/portfolio"
+    "url": "https://github.com/fslauq/"
   },
   "scripts": {
     "build": "next build",
