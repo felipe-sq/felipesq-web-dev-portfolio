@@ -53,12 +53,12 @@ const Nav = () => {
             />
         </NextLink>
         <Box>
-          <NextLink href="/music" passHref>
+          <NextLink href="/projects" passHref>
             <Button as="a" variant="ghost" p={[1, 4]}>
-              Original Music
+              Projects
             </Button>
           </NextLink>
-          <NextLink href="/scoring" passHref>
+          {/* <NextLink href="/scoring" passHref>
             <Button as="a" variant="ghost" p={[1, 4]}>
               Film Scoring
             </Button>
@@ -72,12 +72,12 @@ const Nav = () => {
             <Button as="a" variant="ghost" p={[1, 4]}>
               Playlists
             </Button>
-          </NextLink>
-          <NextLink href="/shop" passHref>
+          </NextLink> */}
+          {/* <NextLink href="/shop" passHref>
             <Button as="a" variant="ghost" p={[1, 4]}>
               Shop
             </Button>
-          </NextLink>
+          </NextLink> */}
           <IconButton
             aria-label="Toggle dark mode"
             icon={colorMode === "dark" ? "sun" : "moon"}

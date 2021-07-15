@@ -13,7 +13,7 @@ const Footer = () => (
   <Flex align="center" mb={4} direction="column">
     <div>
       <Link
-        href="https://www.instagram.com/joshjacobsongs/"
+        href="https://www.instagram.com/"
         title="Instagram"
         icon="instagram"
         isExternal
@@ -27,7 +27,7 @@ const Footer = () => (
         />
       </Link>
       <Link
-        href="https://www.youtube.com/joshjacobsongs"
+        href="https://www.youtube.com/"
         title="YouTube"
         isExternal
       >
@@ -39,7 +39,7 @@ const Footer = () => (
           variant="ghost"
         />
       </Link>
-      <Link href="mailto:joshjacobsonmusic@gmail.com" title="Email" isExternal>
+      <Link href="mailto:fslauq@gmail.com" title="Email" isExternal>
         <IconButton
           aria-label="Email"
           icon="mail"

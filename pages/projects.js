@@ -18,7 +18,7 @@ const url = "https://joshjacobsonmusic.com/blog";
 const title = "Josh Jacobson | Original Music";
 const description = "Original music by Josh Jacobson";
 
-const Music = () => {
+const Projects = () => {
   const { colorMode } = useColorMode();
   const secondaryTextColor = {
     light: "gray.700",
@@ -123,4 +123,4 @@ const Music = () => {
   );
 };
 
-export default Music;
+export default Projects;
