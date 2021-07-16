@@ -69,7 +69,7 @@ const Index = () => {
           <ProjectCard
             title="Chuck Norris Joke Generator"
             description="This project was created with React and features a joke generator tailored to the Chuck Norris fandom!"
-            href="http://chuck-norris-joke-generator-steel.vercel.app"
+            href="http://chuck-norris-jokes-chi.vercel.app"
             image="/time_lost_200.jpg"
           />
           <ProjectCard

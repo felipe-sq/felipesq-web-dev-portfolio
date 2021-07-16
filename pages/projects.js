@@ -98,7 +98,7 @@ const Projects = () => {
             <ProjectCard
             title="Chuck Norris Joke Generator"
             description="This project was created with React and features a joke generator tailored to the Chuck Norris fandom!"
-            href="https://chuck-norris-joke-generator-steel.vercel.app"
+            href="https://chuck-norris-jokes-chi.vercel.app"
             image="/juniper_200.jpg"
           />
           <ProjectCard
