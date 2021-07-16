@@ -14,9 +14,9 @@ import {
 import ProjectCard from "../components/ProjectCard";
 import Container from "../components/Container";
 
-const url = "https://joshjacobsonmusic.com/blog";
-const title = "Josh Jacobson | Original Music";
-const description = "Original music by Josh Jacobson";
+const url = "https://github.com/felipe-sq";
+const title = "Felipe Slaughter-Quintero | Coding with Heart";
+const description = "Coding and design website design by Felipe Slaughter-Quintero";
 
 const Projects = () => {
   const { colorMode } = useColorMode();
@@ -53,7 +53,7 @@ const Projects = () => {
             maxWidth="700px"
           >
             <Heading letterSpacing="tight" mb={2} as="h1" size="2xl">
-              Original Music
+              Project Files
             </Heading>
           </Flex>
           <Flex
@@ -64,34 +64,25 @@ const Projects = () => {
             mt={8}
           >
             <Text color={secondaryTextColor[colorMode]} mb={4}>
-              As a solo artist, Josh has performed all over the world including
-              a headline US tour and music festival performances including
-              Brooklyn Electronic Music Festival and Splash House. Josh has also
-              opened for major dance acts including Petit Biscuit and Louis the
-              Child as direct support.
+              Take a look at some of my prior work. I like to take on a variety of projects to continuously challenge myself and stay up-to-date on the most recent technologies.
             </Text>
             <Heading size="md" as="h3" mb={2} fontWeight="medium">
-              Press / Radio
+              Recent Updates
             </Heading>
-
             <Text color={secondaryTextColor[colorMode]} mb={4}>
-              Featured on tastemaker channels and press outlets including
-              Huffington Post, KCRW, Rinse FM London, Nest HQ, Indie Shuffle, Nylon, and Earmilk.
+              Lorem Ipsum Dolorem.
             </Text>
             <Heading size="md" as="h3" mb={2} fontWeight="medium">
-              In-store play
+              Attention to Detail
             </Heading>
             <Text color={secondaryTextColor[colorMode]} mb={4}>
-              Starbucks Reserve, MAC, Abercrombie & Fitch, Hollister, Joe &
-              the Juice and other stores
+              Lorem Ipsum Dolorem.
             </Text>
             <Heading size="md" as="h3" mb={2} fontWeight="medium">
-              Playlist features
+              Project features
             </Heading>
             <Text color={secondaryTextColor[colorMode]} mb={4}>
-              Chill Vibes, Young & Free, Chill Tracks, Classical New Releases,
-              New Music Friday UK and many others. Also featured in playlists by
-              independent curators including ChilledCow, Nike, Chillhop and Pickup Music.
+              Lorem Ipsum Dolorem.
             </Text>
           </Flex>
           <Flex
@@ -102,19 +93,25 @@ const Projects = () => {
             mt={8}
           >
             <Heading letterSpacing="tight" mb={4} size="xl" fontWeight={700}>
-              Instrumental side projects:
+              Individual projects:
             </Heading>
             <ProjectCard
-            title="Treman"
-            description="Modern classical piano"
-            href="https://open.spotify.com/artist/7MnTSJ0nl9IdMRSq3vLdGP?si=qdHsyw8qRRu1OSZ_NQhlHQ"
+            title="Project 1"
+            description="Project 1 placeholder description"
+            href="https://github.com/felipe-sq"
             image="/juniper_200.jpg"
           />
           <ProjectCard
-            title="azula"
-            description="Lofi hip hop & instrumental collaborations"
-            href="https://open.spotify.com/artist/1ExCrobB2mqThavegHEHeS?si=z3XhuKqMRvSCYO2EomMe8A"
+            title="Project 2"
+            description="Project 2 placeholder description"
+            href="https://github.com/felipe-sq"
             image="/beginnings_200.jpeg"
+          />
+          <ProjectCard
+            title="Project 3"
+            description="Project 3 placeholder description"
+            href="https://github.com/felipe-sq"
+            image="/oceans_200.jpg"
           />
           </Flex>
         </Stack>

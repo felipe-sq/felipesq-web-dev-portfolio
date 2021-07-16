@@ -1,13 +1,13 @@
 import React from 'react';
 import { Flex, Link, IconButton } from '@chakra-ui/core';
 
-const spotifyFollow = '<iframe src="https://open.spotify.com/follow/1/?uri=spotify:artist:3KpCBwmIHMdBD3GzV1xNtE&size=detail&theme=dark" width="300" height="56" scrolling="no" frameborder="0" style="border:none; overflow:hidden;" allowtransparency="true"></iframe>'
+// const gitFollow = '<iframe src="https://github.com/felipe-sq/" width="300" height="56" scrolling="no" frameborder="0" style="border:none; overflow:hidden;" allowtransparency="true"></iframe>'
 
-const iframe =  () => {
-  return {
-    __html: spotifyFollow
-  }
-};
+// const iframe =  () => {
+//   return {
+//     __html: gitFollow
+//   }
+// };
 
 const Footer = () => (
   <Flex align="center" mb={4} direction="column">
@@ -48,7 +48,7 @@ const Footer = () => (
           variant="ghost"
         />
       </Link>
-      <div dangerouslySetInnerHTML={ iframe() } />
+      {/* <div dangerouslySetInnerHTML={ iframe() } /> */}
     </div>
   </Flex>
 );
