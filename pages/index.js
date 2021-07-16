@@ -67,9 +67,9 @@ const Index = () => {
             Recent Projects
           </Heading>
           <ProjectCard
-            title="Project 1"
-            description="Project 1 is awesome and will be linked here!"
-            href="http://example-url.com"
+            title="Chuck Norris Joke Generator"
+            description="This project was created with React and features a joke generator tailored to the Chuck Norris fandom!"
+            href="chuck-norris-joke-generator-steel.vercel.app"
             image="/time_lost_200.jpg"
           />
           <ProjectCard

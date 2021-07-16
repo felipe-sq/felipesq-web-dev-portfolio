@@ -96,9 +96,9 @@ const Projects = () => {
               Individual projects:
             </Heading>
             <ProjectCard
-            title="Project 1"
-            description="Project 1 placeholder description"
-            href="https://github.com/felipe-sq"
+            title="Chuck Norris Joke Generator"
+            description="This project was created with React and features a joke generator tailored to the Chuck Norris fandom!"
+            href="chuck-norris-joke-generator-steel.vercel.app"
             image="/juniper_200.jpg"
           />
           <ProjectCard
