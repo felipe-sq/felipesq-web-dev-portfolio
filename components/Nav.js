@@ -45,12 +45,9 @@ const Nav = () => {
         mx="auto"
       >
         <NextLink href="/" passHref>
-            <IconButton
-            aria-label="jj-logo"
-            href="/"
-            icon={"jj_circle_logo"}
-            className="nav-logo"
-            />
+          <Button as="a" variant="ghost" p={[1, 4]}>
+            Home
+          </Button>
         </NextLink>
         <Box>
           <NextLink href="/projects" passHref>
@@ -58,26 +55,6 @@ const Nav = () => {
               Projects
             </Button>
           </NextLink>
-          {/* <NextLink href="/scoring" passHref>
-            <Button as="a" variant="ghost" p={[1, 4]}>
-              Film Scoring
-            </Button>
-          </NextLink>
-          <NextLink href="/collaborations" passHref>
-            <Button as="a" variant="ghost" p={[1, 4]}>
-              Collaborations
-            </Button>
-          </NextLink>
-          <NextLink href="/playlists" passHref>
-            <Button as="a" variant="ghost" p={[1, 4]}>
-              Playlists
-            </Button>
-          </NextLink> */}
-          {/* <NextLink href="/shop" passHref>
-            <Button as="a" variant="ghost" p={[1, 4]}>
-              Shop
-            </Button>
-          </NextLink> */}
           <IconButton
             aria-label="Toggle dark mode"
             icon={colorMode === "dark" ? "sun" : "moon"}
