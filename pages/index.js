@@ -68,25 +68,25 @@ const Index = () => {
           </Heading>
           <ProjectCard
             title="Project 1"
-            description="cinematic ambient album, with compositions for piano & strings"
+            description="Project 1 is awesome and will be linked here!"
             href="http://example-url.com"
             image="/time_lost_200.jpg"
           />
           <ProjectCard
             title="Project 2"
-            description="Debut album, featuring collaborations with Carmody and Monogem"
+            description="Project 2 is all about random jokes!"
             href="http://example-url.com"
             image="/oceans_200.jpg"
           />
           <ProjectCard
             title="Project 3"
-            description="Treman piano single featured on Spotify's Classical New Releases playlist"
+            description="Project 3 will blow your socks off!"
             href="http://example-url.com"
             image="/juniper_200.jpg"
           />
           <ProjectCard
             title="Project 4"
-            description="Original music for an award-winning documentary film shown at Manhattan Film Festival and Beloit Film Festival"
+            description="A nice, chill project to review"
             href="http://example-url.com"
             image="/tys_list_200.jpg"
           />
