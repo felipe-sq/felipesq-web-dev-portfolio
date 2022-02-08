@@ -73,21 +73,21 @@ const Index = () => {
             image="/time_lost_200.jpg"
           />
           <ProjectCard
-            title="Project 2"
-            description="Project 2 is all about random jokes!"
-            href="http://example-url.com"
+            title="Water My Plants"
+            description="This project was created with React and is designed to allow users to add and manage plants and their water schedules!"
+            href="https://watermyplants21-mj7zvundd-tt92-water.vercel.app"
             image="/oceans_200.jpg"
           />
           <ProjectCard
-            title="Project 3"
-            description="Project 3 will blow your socks off!"
-            href="http://example-url.com"
+            title="Secret Recipes"
+            description="Secret Recipes is a React app designed to help users find and share recipes, whether they are family recipes, favorites found online or in cookboooks, or unique creations!"
+            href="https://frontend-lovat-sigma.vercel.app/login"
             image="/juniper_200.jpg"
           />
           <ProjectCard
-            title="Project 4"
-            description="A nice, chill project to review"
-            href="http://example-url.com"
+            title="The Honey-Do List!"
+            description="A simple, colorful to-do list app designed to help users keep track of their daily tasks!"
+            href="https://quirky-leakey-14d7e6.netlify.app"
             image="/tys_list_200.jpg"
           />
 

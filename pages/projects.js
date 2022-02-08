@@ -102,15 +102,15 @@ const Projects = () => {
             image="/juniper_200.jpg"
           />
           <ProjectCard
-            title="Project 2"
-            description="Project 2 placeholder description"
-            href="https://github.com/felipe-sq"
+            title="Water My Plants"
+            description="This project was created with React and is designed to allow users to add and manage plants and their water schedules!"
+            href="https://watermyplants21-mj7zvundd-tt92-water.vercel.app"
             image="/beginnings_200.jpeg"
           />
           <ProjectCard
-            title="Project 3"
-            description="Project 3 placeholder description"
-            href="https://github.com/felipe-sq"
+            title="Secret Recipes"
+            description="Secret Recipes is a React app designed to help users find and share recipes, whether they are family recipes, favorites found online or in cookboooks, or unique creations!"
+            href="https://frontend-lovat-sigma.vercel.app/login"
             image="/oceans_200.jpg"
           />
           </Flex>
