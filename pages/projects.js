@@ -70,19 +70,19 @@ const Projects = () => {
               Recent Updates
             </Heading>
             <Text color={secondaryTextColor[colorMode]} mb={4}>
-              Lorem Ipsum Dolorem.
+              Coming soon...
             </Text>
             <Heading size="md" as="h3" mb={2} fontWeight="medium">
               Attention to Detail
             </Heading>
             <Text color={secondaryTextColor[colorMode]} mb={4}>
-              Lorem Ipsum Dolorem.
+              Coming soon...
             </Text>
             <Heading size="md" as="h3" mb={2} fontWeight="medium">
               Project features
             </Heading>
             <Text color={secondaryTextColor[colorMode]} mb={4}>
-              Lorem Ipsum Dolorem.
+              Coming soon...
             </Text>
           </Flex>
           <Flex
