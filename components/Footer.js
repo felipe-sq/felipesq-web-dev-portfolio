@@ -1,13 +1,14 @@
 import React from "react";
 import { Flex, Link, IconButton } from "@chakra-ui/core";
 
-// const gitFollow = '<iframe src="https://github.com/felipe-sq/" width="300" height="56" scrolling="no" frameborder="0" style="border:none; overflow:hidden;" allowtransparency="true"></iframe>'
+const gitFollow =
+  '<iframe src="https://github.com/felipe-sq/" width="300" height="56" scrolling="no" frameborder="0" style="border:none; overflow:hidden;" allowtransparency="true"></iframe>';
 
-// const iframe =  () => {
-//   return {
-//     __html: gitFollow
-//   }
-// };
+const iframe = () => {
+  return {
+    __html: gitFollow,
+  };
+};
 
 const Footer = () => (
   <Flex align="center" mb={4} direction="column">
