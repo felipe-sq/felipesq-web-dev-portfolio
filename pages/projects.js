@@ -16,7 +16,8 @@ import Container from "../components/Container";
 
 const url = "https://github.com/felipe-sq";
 const title = "Felipe Slaughter-Quintero | Coding with Heart";
-const description = "Coding and design website design by Felipe Slaughter-Quintero";
+const description =
+  "Coding and design website design by Felipe Slaughter-Quintero";
 
 const Projects = () => {
   const { colorMode } = useColorMode();
@@ -64,25 +65,24 @@ const Projects = () => {
             mt={8}
           >
             <Text color={secondaryTextColor[colorMode]} mb={4}>
-              Take a look at some of my prior work. I like to take on a variety of projects to continuously challenge myself and stay up-to-date on the most recent technologies.
+              Take a look at some of my prior work. I like to take on a variety
+              of projects to continuously challenge myself and stay up-to-date
+              on the most recent technologies.
             </Text>
             <Heading size="md" as="h3" mb={2} fontWeight="medium">
               Recent Updates
             </Heading>
             <Text color={secondaryTextColor[colorMode]} mb={4}>
-              Coming soon...
-            </Text>
-            <Heading size="md" as="h3" mb={2} fontWeight="medium">
-              Attention to Detail
-            </Heading>
-            <Text color={secondaryTextColor[colorMode]} mb={4}>
-              Coming soon...
+              I am currently working on a few new projects and Apps to better my
+              skills and learn new technologies. My main focus is on React,
+              JavaScript, and Node.js.
             </Text>
             <Heading size="md" as="h3" mb={2} fontWeight="medium">
               Project features
             </Heading>
             <Text color={secondaryTextColor[colorMode]} mb={4}>
-              Coming soon...
+              The projects listed below are a just a small selection of my work.
+              I am always looking for new projects to add to my portfolio.
             </Text>
           </Flex>
           <Flex
@@ -96,23 +96,23 @@ const Projects = () => {
               Individual projects:
             </Heading>
             <ProjectCard
-            title="Chuck Norris Joke Generator"
-            description="This project was created with React and features a joke generator tailored to the Chuck Norris fandom!"
-            href="https://chuck-norris-jokes-chi.vercel.app"
-            image="/juniper_200.jpg"
-          />
-          <ProjectCard
-            title="Water My Plants"
-            description="This project was created with React and is designed to allow users to add and manage plants and their water schedules!"
-            href="https://watermyplants21-mj7zvundd-tt92-water.vercel.app"
-            image="/beginnings_200.jpeg"
-          />
-          <ProjectCard
-            title="Secret Recipes"
-            description="Secret Recipes is a React app designed to help users find and share recipes, whether they are family recipes, favorites found online or in cookboooks, or unique creations!"
-            href="https://frontend-lovat-sigma.vercel.app/login"
-            image="/oceans_200.jpg"
-          />
+              title="Chuck Norris Joke Generator"
+              description="This project was created with React and features a joke generator tailored to the Chuck Norris fandom!"
+              href="https://chuck-norris-jokes-chi.vercel.app"
+              image="/juniper_200.jpg"
+            />
+            <ProjectCard
+              title="Water My Plants"
+              description="This project was created with React and is designed to allow users to add and manage plants and their water schedules!"
+              href="https://watermyplants21-mj7zvundd-tt92-water.vercel.app"
+              image="/beginnings_200.jpeg"
+            />
+            <ProjectCard
+              title="Secret Recipes"
+              description="Secret Recipes is a React app designed to help users find and share recipes, whether they are family recipes, favorites found online or in cookboooks, or unique creations!"
+              href="https://frontend-lovat-sigma.vercel.app/login"
+              image="/oceans_200.jpg"
+            />
           </Flex>
         </Stack>
       </Container>
