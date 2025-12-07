@@ -1,5 +1,5 @@
 import React from "react";
-import { useColorMode, Heading, Text, Flex, Stack } from "@chakra-ui/core";
+import { useColorMode, Heading, Text, Flex, Stack } from "@chakra-ui/react";
 import Container from "../components/Container";
 import ProjectCard from "../components/ProjectCard";
 
@@ -30,7 +30,8 @@ const Index = () => {
             Hi, I’m Felipe.
           </Heading>
           <Text color={secondaryTextColor[colorMode]}>
-            I write and tinker with code to find out how I can make websites and Web Apps better.
+            I write and tinker with code to find out how I can make websites and
+            Web Apps better.
           </Text>
         </Flex>
         <Flex
@@ -44,18 +45,22 @@ const Index = () => {
             About
           </Heading>
           <Text color={secondaryTextColor[colorMode]} mb={4}>
-            I grew up in California and Oregon as part of an entrepreneurial family which instilled a strong curiosity and work ethic from a young age. I've since moved to Florida, where my curiosity continues to thrive, alongside my desire to understand the inner working of websites, code and technology in general. 
+            I grew up in California and Oregon as part of an entrepreneurial
+            family which instilled a strong curiosity and work ethic from a
+            young age. I've since moved to Florida, where my curiosity continues
+            to thrive, alongside my desire to understand the inner working of
+            websites, code and technology in general.
           </Text>
           <Text color={secondaryTextColor[colorMode]} mb={4}>
-            My favorite color is green. I love being outside, in the sunshine, whether it's at the beach, at a park or in the back yard. 
+            My favorite color is green. I love being outside, in the sunshine,
+            whether it's at the beach, at a park or in the back yard.
           </Text>
           <Text color={secondaryTextColor[colorMode]} mb={4}>
-            My background in graphic design and writing help to bring a visually pleasing and engaging aesthetic to everything I create or work on. I enjoy new challenges, so if you have a project which could use a fresh perspective, I'd love to hear from you. 
+            My background in graphic design and writing help to bring a visually
+            pleasing and engaging aesthetic to everything I create or work on. I
+            enjoy new challenges, so if you have a project which could use a
+            fresh perspective, I'd love to hear from you.
           </Text>
-
-
-
-
         </Flex>
         <Flex
           flexDirection="column"
@@ -90,7 +95,6 @@ const Index = () => {
             href="https://quirky-leakey-14d7e6.netlify.app"
             image="/tys_list_200.jpg"
           />
-
         </Flex>
       </Stack>
     </Container>

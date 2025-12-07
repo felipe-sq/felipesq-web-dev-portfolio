@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///turbopack:///[project]/styles/styles.scss"],"sourcesContent":[".nav-logo {\n  height:60px;\n  background: none !important;\n  svg {\n    width: 60px;\n    height: 60px;\n    margin-right: 20px;\n    &:hover {\n      color: #1E4E8C;\n    }\n  }\n}\n\n.project-card {\n  width: 100%;\n  margin: 10px 0;\n  img {\n    margin-right: 20px;\n  }\n}\n\n.header-image {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n}"],"names":[],"mappings":"AAAA;;;;;AAGE;;;;;;AAIE;;;;AAMJ;;;;;AAGE;;;;AAKF"}}]
+}

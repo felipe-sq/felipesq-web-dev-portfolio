@@ -10,7 +10,7 @@ import {
   InputGroup,
   InputRightElement,
   Icon,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import ProjectCard from "../components/ProjectCard";
 import Container from "../components/Container";
 

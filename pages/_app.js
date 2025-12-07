@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
-import { Global, css } from "@emotion/core";
+import { Global, css } from "@emotion/react";
 import { DefaultSeo } from "next-seo";
 import {
-  ThemeProvider,
-  CSSReset,
-  ColorModeProvider,
+  ChakraProvider,
+  ColorModeScript,
   useColorMode,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import Router from "next/router";
 import * as Fathom from "fathom-client";
 
@@ -20,7 +19,6 @@ const GlobalStyle = ({ children }) => {
 
   return (
     <>
-      <CSSReset />
       <Global
         styles={css`
           ${colorMode === "light" ? prismLightTheme : prismDarkTheme};
@@ -62,14 +60,19 @@ const App = ({ Component, pageProps }) => {
   }, []);
 
   return (
-    <ThemeProvider theme={theme}>
-      <ColorModeProvider value="dark">
-        <GlobalStyle>
-          <DefaultSeo {...SEO} />
-          <Component {...pageProps} />
-        </GlobalStyle>
-      </ColorModeProvider>
-    </ThemeProvider>
+    <ChakraProvider theme={theme}>
+      <ColorModeScript
+        initialColorMode={
+          theme.config && theme.config.initialColorMode
+            ? theme.config.initialColorMode
+            : "dark"
+        }
+      />
+      <GlobalStyle>
+        <DefaultSeo {...SEO} />
+        <Component {...pageProps} />
+      </GlobalStyle>
+    </ChakraProvider>
   );
 };
 

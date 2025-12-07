@@ -1,0 +1,7 @@
+[00:00:02.704] Server  LOG      ✓ Ready in 1819ms
+[00:00:05.759] Server  LOG      ○ Compiling / ...
+[00:00:09.182] Server  WARN    Warning: viewport meta tags should not be used in _document.js's <Head>. https://nextjs.org/docs/messages/no-document-viewport-meta
+[00:00:09.188] Server  WARN    Your custom Document (pages/_document) did not render all the required subcomponent.
+Missing component: <Html />
+Read how to fix here: https://nextjs.org/docs/messages/missing-document-component
+[00:01:05.557] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior

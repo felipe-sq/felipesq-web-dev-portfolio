@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Link, IconButton } from "@chakra-ui/core";
+import { Flex, Link, IconButton } from "@chakra-ui/react";
 
 const gitFollow =
   '<iframe src="https://github.com/felipe-sq/" width="300" height="56" scrolling="no" frameborder="0" style="border:none; overflow:hidden;" allowtransparency="true"></iframe>';
