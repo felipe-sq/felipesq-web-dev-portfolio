@@ -1,23 +1,24 @@
-import React from 'react';
+import React from "react";
 import {
   Flex,
+  Box,
   Link,
-  Heading,
   Text,
+  Heading,
   Stack,
   Icon,
-  useColorMode
-} from '@chakra-ui/core';
+  useColorMode,
+} from "@chakra-ui/react";
 
 const ProjectCard = ({ title, description, href, image }) => {
   const { colorMode } = useColorMode();
   const borderColor = {
-    light: 'gray.200',
-    dark: 'gray.600'
+    light: "gray.200",
+    dark: "gray.600",
   };
   const iconColor = {
-    light: 'gray.1000',
-    dark: 'white'
+    light: "gray.1000",
+    dark: "white",
   };
 
   return (
@@ -28,8 +29,8 @@ const ProjectCard = ({ title, description, href, image }) => {
         title={title}
         isExternal
         _hover={{
-          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.05)',
-          textDecoration: 'none'
+          boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.05)",
+          textDecoration: "none",
         }}
       >
         <Flex
@@ -39,7 +40,8 @@ const ProjectCard = ({ title, description, href, image }) => {
           borderRadius={4}
           p={4}
         >
-          <img src={image}
+          <img
+            src={image}
             alt={image}
             width="40px"
             padding="20px"

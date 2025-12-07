@@ -1,7 +1,8 @@
 import React from "react";
 import NextLink from "next/link";
 import styled from "@emotion/styled";
-import { useColorMode, Button, Flex, Box, IconButton } from "@chakra-ui/core";
+import { useColorMode, Button, Flex, Box, IconButton } from "@chakra-ui/react";
+import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 
 const StickyNav = styled(Flex)`
   position: sticky;
@@ -44,20 +45,20 @@ const Nav = () => {
         mb={8}
         mx="auto"
       >
-        <NextLink href="/" passHref>
-          <Button as="a" variant="ghost" p={[1, 4]}>
+        <NextLink href="/">
+          <Button variant="ghost" p={[1, 4]}>
             Home
           </Button>
         </NextLink>
         <Box>
-          <NextLink href="/projects" passHref>
-            <Button as="a" variant="ghost" p={[1, 4]}>
+          <NextLink href="/projects">
+            <Button variant="ghost" p={[1, 4]}>
               Projects
             </Button>
           </NextLink>
           <IconButton
             aria-label="Toggle dark mode"
-            icon={colorMode === "dark" ? "sun" : "moon"}
+            icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />}
             onClick={toggleColorMode}
           />
         </Box>
