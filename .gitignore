@@ -6,6 +6,6 @@ assets/.DS_Store
 .env*.local
 .vercel
 
-# Per-machine Claude Code overrides (absolute paths, personal permission grants).
-# Shared config belongs in .claude/settings.json, which is not ignored.
-.claude/settings.local.json
+# Claude Code config is kept personal, not shared. Covers settings.local.json
+# (absolute paths, personal permission grants) and launch.json.
+.claude/
