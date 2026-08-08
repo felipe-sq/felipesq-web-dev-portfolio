@@ -1,5 +1,12 @@
 import React from "react";
-import { useColorMode, Heading, Text, Flex, Stack } from "@chakra-ui/react";
+import {
+  useColorMode,
+  Heading,
+  Link,
+  Text,
+  Flex,
+  Stack,
+} from "@chakra-ui/react";
 import Container from "../components/Container";
 import ProjectCard from "../components/ProjectCard";
 import projects from "../data/projects";
@@ -9,6 +16,12 @@ const Index = () => {
   const secondaryTextColor = {
     light: "gray.700",
     dark: "gray.400",
+  };
+  // Same pair ProjectCard uses for its footer links, so inline links in body
+  // copy read as links in both color modes.
+  const linkColor = {
+    light: "blue.600",
+    dark: "blue.300",
   };
 
   return (
@@ -31,8 +44,9 @@ const Index = () => {
             Hi, I’m Felipe.
           </Heading>
           <Text color={secondaryTextColor[colorMode]}>
-            I write and tinker with code to find out how I can make websites and
-            Web Apps better.
+            I&apos;m a software engineer. I build production web applications
+            with React, Next.js, and TypeScript, and I work at the intersection
+            of software, AI, and e-commerce.
           </Text>
         </Flex>
         <Flex
@@ -46,21 +60,45 @@ const Index = () => {
             About
           </Heading>
           <Text color={secondaryTextColor[colorMode]} mb={4}>
-            I grew up in California and Oregon as part of an entrepreneurial
-            family which instilled a strong curiosity and work ethic from a
-            young age. I&apos;ve since moved to Florida, where my curiosity
-            continues to thrive, alongside my desire to understand the inner
-            working of websites, code and technology in general.
+            I&apos;ve worked as a software engineer since 2022, currently for a
+            large enterprise technology organization. Day to day that means
+            production React and Next.js applications: reusable components
+            against an established design system, GraphQL and REST integrations,
+            headless CMS content shaped for the front end, framework upgrades
+            planned and validated, and accessibility and security findings run
+            down and fixed. Most of my work happens inside systems that already
+            exist, not greenfield demos.
           </Text>
           <Text color={secondaryTextColor[colorMode]} mb={4}>
-            My favorite color is green. I love being outside, in the sunshine,
-            whether it&apos;s at the beach, at a park or in the back yard.
+            Alongside that I treat AI as infrastructure rather than a feature. I
+            self-hosted and heavily customized an LLM-driven creative-strategy
+            assistant on a private server, running against both the OpenAI and
+            Anthropic APIs and reachable from Telegram, Discord, Slack, and a
+            browser dashboard, with private networking and my own tunnel and
+            access tooling on top. The interesting part was never the model; it
+            was the wiring, the access controls, and the deployment around it.
           </Text>
           <Text color={secondaryTextColor[colorMode]} mb={4}>
-            My background in graphic design and writing help to bring a visually
-            pleasing and engaging aesthetic to everything I create or work on. I
-            enjoy new challenges, so if you have a project which could use a
-            fresh perspective, I&apos;d love to hear from you.
+            I also hold a BBA, and I&apos;ve spent years on the commercial side
+            of the web — conversion, landing pages, lifecycle email, offer
+            positioning. It means I tend to ask what a feature is meant to
+            accomplish, and for whom, before I ask how to build it. Accessible,
+            fast, maintainable software and software that actually moves a
+            business forward are usually the same problem approached from two
+            directions.
+          </Text>
+          <Text color={secondaryTextColor[colorMode]} mb={4}>
+            Right now I&apos;m deepening my Shopify and e-commerce development
+            work, where that combination earns its keep. If you have a project
+            that could use it,{" "}
+            <Link
+              href="mailto:fslauq@gmail.com"
+              color={linkColor[colorMode]}
+              fontWeight="medium"
+            >
+              I&apos;d love to hear from you
+            </Link>
+            .
           </Text>
         </Flex>
         <Flex

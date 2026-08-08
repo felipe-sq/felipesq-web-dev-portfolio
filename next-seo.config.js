@@ -1,8 +1,10 @@
 import siteConfig from "./site.config";
 
 const title = "Felipe Slaughter-Quintero";
+// The OG card in pages/api/og.js renders everything after the "|" as its
+// tagline, so keep that half short enough to wrap in two lines at 38px.
 const description =
-  "Felipe Slaughter-Quintero | Web Developer, UI Design and Content Creator";
+  "Felipe Slaughter-Quintero | Software Engineer — React, Next.js, TypeScript, AI integrations, and Shopify e-commerce.";
 
 const SEO = {
   title,
@@ -10,7 +12,7 @@ const SEO = {
   canonical: siteConfig.siteUrl,
   openGraph: {
     type: "website",
-    locale: "en_IE",
+    locale: "en_US",
     url: siteConfig.siteUrl,
     title,
     description,

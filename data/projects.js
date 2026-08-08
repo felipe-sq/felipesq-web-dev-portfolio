@@ -1,9 +1,10 @@
 // Single source of truth for the project list.
 // Rendered by pages/index.js ("Recent Projects") and pages/projects.js
-// ("Individual projects") via components/ProjectCard.js.
+// ("The projects") via components/ProjectCard.js.
 //
-// `href` is the live demo. `repoHref` is optional — the card renders a second
-// "Code" link only for the entries that have one.
+// `href` (live demo) and `repoHref` (source) are both optional, and the card
+// renders a link only for the ones an entry has. A desktop app with no URL to
+// demo is repo-only; an entry with neither gets no footer row at all.
 //
 // `initials` and `accent` drive the monogram tile the card draws in place of a
 // thumbnail image. Every accent clears 4.5:1 against the white monogram, so the
@@ -14,7 +15,7 @@ const projects = [
     id: "chuck-norris-jokes",
     title: "Chuck Norris Joke Generator",
     description:
-      "This project was created with React and features a joke generator tailored to the Chuck Norris fandom!",
+      "A React app that serves up an endless supply of Chuck Norris jokes on demand.",
     href: "https://chuck-norris-jokes-chi.vercel.app",
     initials: "CN",
     accent: "#c05621",
@@ -33,7 +34,7 @@ const projects = [
     id: "secret-recipes",
     title: "Secret Recipes",
     description:
-      "Secret Recipes is a React app designed to help users find and share recipes, whether they are family recipes, favorites found online or in cookboooks, or unique creations!",
+      "A React app for collecting and sharing recipes — family standbys, finds from a cookbook, or your own inventions.",
     href: "https://frontend-lovat-sigma.vercel.app/login",
     initials: "SR",
     accent: "#6b46c1",

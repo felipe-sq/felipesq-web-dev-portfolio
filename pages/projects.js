@@ -7,9 +7,9 @@ import projects from "../data/projects";
 import siteConfig from "../site.config";
 
 const url = `${siteConfig.siteUrl}/projects`;
-const title = "Felipe Slaughter-Quintero | Coding with Heart";
+const title = "Project Files | Felipe Slaughter-Quintero";
 const description =
-  "Coding and design website design by Felipe Slaughter-Quintero";
+  "Independent projects by Felipe Slaughter-Quintero, software engineer — React, Next.js, TypeScript, Node, and AI integrations.";
 
 const Projects = () => {
   const { colorMode } = useColorMode();
@@ -57,24 +57,43 @@ const Projects = () => {
             mt={8}
           >
             <Text color={secondaryTextColor[colorMode]} mb={4}>
-              Take a look at some of my prior work. I like to take on a variety
-              of projects to continuously challenge myself and stay up-to-date
-              on the most recent technologies.
+              Independent projects I can show publicly. Most of my engineering
+              happens in production applications I can&apos;t publish, so treat
+              what&apos;s below as a sample of how I work rather than the
+              ceiling of what I build.
             </Text>
-            <Heading size="md" as="h3" mb={2} fontWeight="medium">
-              Recent Updates
+            <Heading size="md" as="h2" mb={2} fontWeight="medium">
+              Professional work
             </Heading>
             <Text color={secondaryTextColor[colorMode]} mb={4}>
-              I am currently working on a few new projects and Apps to better my
-              skills and learn new technologies. My main focus is on React,
-              JavaScript, and Node.js.
+              Since 2022 I&apos;ve worked as a software engineer, currently for
+              a large enterprise technology organization. That work is
+              production React, Next.js, and TypeScript against an established
+              design system — Material UI theming and component variants,
+              GraphQL and REST integrations, Azure and Cosmos DB, headless CMS
+              content, SSR and CSR tradeoffs, dependency and framework upgrades,
+              accessibility and focus behavior, and CodeQL findings. It
+              isn&apos;t public, which is why it isn&apos;t listed below.
             </Text>
-            <Heading size="md" as="h3" mb={2} fontWeight="medium">
-              Project features
+            <Heading size="md" as="h2" mb={2} fontWeight="medium">
+              How I build
             </Heading>
             <Text color={secondaryTextColor[colorMode]} mb={4}>
-              The projects listed below are a just a small selection of my work.
-              I am always looking for new projects to add to my portfolio.
+              These start as a React or Next.js front end and grow a Node,
+              Express, and PostgreSQL back end when the data calls for it. I
+              reach for TypeScript on anything large enough to earn it, deploy
+              on Vercel, and treat accessibility as part of building rather than
+              a pass at the end — labeled controls, working keyboard navigation,
+              and color that clears WCAG contrast in both light and dark modes.
+            </Text>
+            <Heading size="md" as="h2" mb={2} fontWeight="medium">
+              Where I&apos;m heading
+            </Heading>
+            <Text color={secondaryTextColor[colorMode]} mb={4}>
+              Two directions, both built on the same foundation rather than
+              replacing it: Shopify and e-commerce development, and AI
+              integration work — LLM APIs connected to real workflows, with the
+              architecture and access controls that implies.
             </Text>
           </Flex>
           <Flex
@@ -85,7 +104,7 @@ const Projects = () => {
             mt={8}
           >
             <Heading letterSpacing="tight" mb={4} size="xl" fontWeight={700}>
-              Individual projects:
+              The projects
             </Heading>
             {projects.map((project) => (
               <ProjectCard
