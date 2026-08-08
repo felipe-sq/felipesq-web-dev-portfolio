@@ -579,31 +579,31 @@ Confirmed against the production server:
 
 ## Remaining open items
 
-Nothing below has been fixed. Grouped by priority, with enough detail to pick up
-cold in a later session.
+Item 1 has since been resolved; everything else below is still open. Grouped by
+priority, with enough detail to pick up cold in a later session.
 
 ### Content — visible on the live site
 
-1. **Project cards use the fork origin's album art as thumbnails.** This repo is
-   a fork of a musician's personal site, and the images under `public/` are that
-   musician's record covers, not screenshots of the projects they label:
+1. ~~**Project cards use the fork origin's album art as thumbnails.**~~
+   **Resolved.** This repo is a fork of a musician's personal site, and the
+   images under `public/` were that musician's record covers rather than
+   screenshots of the projects they labelled. `oceans_200.jpg` carried **another
+   person's name printed on it** while being presented as this portfolio's work,
+   which made it more than a cosmetic issue, and the same three projects
+   appeared on both pages with _different_ covers each time — confirming the
+   images were never meant to correspond to anything.
 
-   | Card                        | Page              | Image                  | What the image actually is          |
-   | --------------------------- | ----------------- | ---------------------- | ----------------------------------- |
-   | Chuck Norris Joke Generator | `index.js:78`     | `/time_lost_200.jpg`   | album cover                         |
-   | Water My Plants             | `index.js:84`     | `/oceans_200.jpg`      | album cover reading "Josh Jacobson" |
-   | Secret Recipes              | `index.js:90`     | `/juniper_200.jpg`     | "Treman / Juniper Drive" cover      |
-   | The Honey-Do List!          | `index.js:96`     | `/tys_list_200.jpg`    | album cover                         |
-   | Chuck Norris Joke Generator | `projects.js:103` | `/juniper_200.jpg`     | "Treman / Juniper Drive" cover      |
-   | Water My Plants             | `projects.js:109` | `/beginnings_200.jpeg` | album cover                         |
-   | Secret Recipes              | `projects.js:115` | `/oceans_200.jpg`      | album cover reading "Josh Jacobson" |
+   The fix did not need screenshots after all. `components/ProjectCard.js` now
+   draws a monogram tile — the project's initials on a coloured rounded square —
+   in place of the `<img>`, with `initials` and `accent` supplied per project by
+   the new `data/projects.js`. Each accent clears 4.5:1 against the white
+   monogram so the tile holds up in both colour modes, and the tile is
+   `aria-hidden` because the heading beside it already names the project.
 
-   Two things to note. `oceans_200.jpg` has **another person's name printed on
-   it** and is currently presented as this portfolio's work, which is worth
-   treating as more than a cosmetic issue. And the same three projects appear on
-   both pages with _different_ covers each time, which confirms the images were
-   never meant to correspond to anything. Fixing this needs real screenshots;
-   once they exist the five `*_200.*` files in `public/` can be deleted.
+   All five `*_200.*` files have been deleted from `public/`. Two latent bugs
+   went out with the `<img>`: `alt={image}` was announcing the file path as alt
+   text, and `padding`/`ml`/`mr` were being passed to a plain `<img>`, where
+   they are not valid HTML attributes and had no effect.
 
 2. **`components/Nav.js` emits `<button>` inside `<a>`** — interactive content
    nested in an anchor, which is invalid HTML, on every page of the site. Same
