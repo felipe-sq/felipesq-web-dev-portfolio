@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Flex,
+  HStack,
   Link,
   Text,
   Heading,
@@ -8,32 +9,40 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 
-const ProjectCard = ({ title, description, href, initials, accent }) => {
+// The card body is deliberately not a link. Each card exposes a live demo and
+// (optionally) a source repo, and an anchor cannot contain another anchor, so
+// the links live in a footer row instead of wrapping the whole card.
+const ProjectCard = ({
+  title,
+  description,
+  href,
+  repoHref,
+  initials,
+  accent,
+}) => {
   const { colorMode } = useColorMode();
   const borderColor = {
     light: "gray.200",
     dark: "gray.600",
   };
+  const linkColor = {
+    light: "blue.600",
+    dark: "blue.300",
+  };
 
   return (
     <div className="project-card">
-      <Link
-        mb={4}
-        href={href}
-        title={title}
-        isExternal
+      <Flex
+        direction="column"
+        border="1px solid"
+        borderColor={borderColor[colorMode]}
+        borderRadius={4}
+        p={4}
         _hover={{
           boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.05)",
-          textDecoration: "none",
         }}
       >
-        <Flex
-          align="center"
-          border="1px solid"
-          borderColor={borderColor[colorMode]}
-          borderRadius={4}
-          p={4}
-        >
+        <Flex align="center">
           {/* Decorative: the heading beside it already names the project, so
               the monogram is hidden from screen readers rather than read out. */}
           <Flex
@@ -65,7 +74,32 @@ const ProjectCard = ({ title, description, href, initials, accent }) => {
             <Text lineHeight="1.3">{description}</Text>
           </Stack>
         </Flex>
-      </Link>
+        {/* Every card repeats "Live demo" / "Code", so each link carries an
+            aria-label naming the project. The label starts with the visible
+            text so voice control still matches what is on screen. */}
+        <HStack spacing={6} mt={4} pl={{ base: 0, sm: "64px" }}>
+          <Link
+            href={href}
+            isExternal
+            aria-label={`Live demo of ${title}`}
+            color={linkColor[colorMode]}
+            fontWeight="medium"
+          >
+            Live demo
+          </Link>
+          {repoHref && (
+            <Link
+              href={repoHref}
+              isExternal
+              aria-label={`Code for ${title}`}
+              color={linkColor[colorMode]}
+              fontWeight="medium"
+            >
+              Code
+            </Link>
+          )}
+        </HStack>
+      </Flex>
     </div>
   );
 };

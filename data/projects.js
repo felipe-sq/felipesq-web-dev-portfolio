@@ -2,6 +2,9 @@
 // Rendered by pages/index.js ("Recent Projects") and pages/projects.js
 // ("Individual projects") via components/ProjectCard.js.
 //
+// `href` is the live demo. `repoHref` is optional — the card renders a second
+// "Code" link only for the entries that have one.
+//
 // `initials` and `accent` drive the monogram tile the card draws in place of a
 // thumbnail image. Every accent clears 4.5:1 against the white monogram, so the
 // tile stays legible in both color modes. The teal is the site accent, shared
@@ -20,8 +23,9 @@ const projects = [
     id: "water-my-plants",
     title: "Water My Plants",
     description:
-      "This project was created with React and is designed to allow users to add and manage plants and their water schedules!",
-    href: "https://watermyplants21-mj7zvundd-tt92-water.vercel.app",
+      "A full-stack plant-care scheduler: React 19 and Vite on the front end, Express and PostgreSQL behind it, with token auth so each account manages its own plants.",
+    href: "https://water-my-plants-felipesqs-projects.vercel.app",
+    repoHref: "https://github.com/felipe-sq/water-my-plants",
     initials: "WP",
     accent: "#2b6cb0",
   },
@@ -40,6 +44,7 @@ const projects = [
     description:
       "A demo grocery list app built with Next.js and TypeScript that runs entirely in the browser — color-coded lists, tag filtering by aisle, and barcode scanning that fills in product names. No account and no backend: lists live in the browser tab, and the sign-in screen is a UI demonstration.",
     href: "https://simple-grocery-list-demo.vercel.app/",
+    repoHref: "https://github.com/felipe-sq/simple-grocery-list",
     initials: "SG",
     accent: "#2c7a6b",
   },

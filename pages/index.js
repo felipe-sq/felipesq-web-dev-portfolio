@@ -78,6 +78,7 @@ const Index = () => {
               title={project.title}
               description={project.description}
               href={project.href}
+              repoHref={project.repoHref}
               initials={project.initials}
               accent={project.accent}
             />
