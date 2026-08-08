@@ -16,13 +16,12 @@ const SEO = {
     description,
     images: [
       {
-        // TODO: replace with a purpose-built 1200x630 social card. This is the
-        // PWA icon - it resolves and is valid, but it is a square grayscale
-        // logo, not a designed preview.
-        url: `${siteConfig.siteUrl}/static/favicons/android-chrome-512x512.png`,
+        // Generated at request time by pages/api/og.js from `title` and
+        // `description` below, so the card cannot drift from the metadata.
+        url: `${siteConfig.siteUrl}/api/og`,
         alt: title,
-        width: 512,
-        height: 512,
+        width: 1200,
+        height: 630,
         type: "image/png",
       },
     ],

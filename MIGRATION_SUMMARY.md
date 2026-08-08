@@ -456,7 +456,7 @@ Consumers updated:
 | File                          | Was                                    | Now                                 |
 | ----------------------------- | -------------------------------------- | ----------------------------------- |
 | `next-seo.config.js`          | `canonical` / `openGraph.url` = GitHub | `siteConfig.siteUrl`                |
-| `next-seo.config.js`          | `og:image` = a GitHub **profile page** | a real, resolvable PNG              |
+| `next-seo.config.js`          | `og:image` = a GitHub **profile page** | a generated 1200×630 PNG            |
 | `pages/projects.js`           | `canonical` = site root                | `${siteUrl}/projects`               |
 | `pages/_app.js`               | Fathom `includedDomains` = a full URL  | `analyticsDomains` (bare hostnames) |
 | `scripts/generate-sitemap.js` | local `SITE_URL` const                 | `require('../site.config')`         |
@@ -466,10 +466,8 @@ Consumers updated:
 Two of these were latent bugs in their own right:
 
 - **`og:image` pointed at an HTML page**, so no social platform could render a
-  preview. It now points at `/static/favicons/android-chrome-512x512.png` with
-  correct `width`/`height`/`type` — valid and resolvable (verified `200
-image/png`), but it is the square grayscale PWA icon. A purpose-built
-  1200×630 card should replace it; there is a `TODO` at the call site.
+  preview. It now points at a generated 1200×630 card — see
+  [section 7](#7-generated-ogimage-card).
 - **Fathom analytics never recorded a pageview.** `includedDomains` was
   `["https://github.com/felipe-sq"]`, and Fathom matches on _bare hostnames_ —
   a URL can never match, so every pageview was filtered out. Now
@@ -514,6 +512,44 @@ Only paths and names changed — `theme_color`, `background_color`, `display`,
 and the tile colour are untouched, and no icon files were added, removed, or
 regenerated.
 
+## 7. Generated `og:image` card
+
+Section 5 left `og:image` pointing at the square grayscale PWA icon — valid and
+resolvable, but not a social card. Nothing in the repo was usable as one: the
+largest assets are 200×200 project thumbnails, `images/pic0*.jpg` at 384×269,
+and a square `placeholder.jpg`.
+
+Rather than commit a hand-designed PNG, `pages/api/og.js` renders the card at
+request time with `ImageResponse` from `next/og`:
+
+```javascript
+const tagline = SEO.description.split("|").pop().trim();
+```
+
+The headline and tagline are derived from `next-seo.config.js`, so the card
+cannot drift from the page metadata, and the colours are the repo's own —
+Chakra `gray.800`/`gray.400` for the surface and body text, plus the `#4a9885`
+accent from `safari-pinned-tab.svg`.
+
+Two things worth knowing about the implementation:
+
+- **No edge runtime.** `next/og` resolves to its Node build unless
+  `NEXT_RUNTIME` is `"edge"`, and Pages Router API routes on Node write to
+  `res` rather than returning a `Response`, so the streamed `ImageResponse` is
+  buffered with `arrayBuffer()` and passed to `res.send()`.
+- **`Cache-Control: public, s-maxage=31536000, max-age=3600`.** The card only
+  changes when the route or the metadata does, so the CDN keeps it and scrapers
+  never trigger a render.
+
+The route is excluded from the sitemap for free — `collectPages()` already skips
+`pages/api` (verified: `sitemap.xml` still lists only `/` and `/projects`).
+
+**Known limitation:** the card renders in the default font at a single weight.
+`@vercel/og` bundles one Noto Sans face, so the `fontWeight: 700` on the
+headline has no effect and the card is not in Inter like the rest of the site.
+Fixing it means committing an Inter `.ttf` and passing it via the `fonts`
+option.
+
 ## Verification
 
 ```bash
@@ -531,7 +567,8 @@ Confirmed against the production server:
 - The 404 "Return Home" button renders as exactly one `<a>`.
 - `canonical` and `og:url` are `https://www.felipesq.dev` on `/` and
   `https://www.felipesq.dev/projects` on `/projects`.
-- `og:image` returns `200 image/png`.
+- `og:image` is `${siteUrl}/api/og` on both pages, and that route returns
+  `200 image/png` with a body that decodes as `PNG image data, 1200 x 630`.
 - `/robots.txt` points `Sitemap:` at the real domain.
 - `analyticsDomains` resolves to `["www.felipesq.dev", "felipesq.dev"]`, and to
   a single entry when `NEXT_PUBLIC_SITE_URL` overrides it.
@@ -542,8 +579,8 @@ Confirmed against the production server:
 
 ## Remaining open items
 
-1. **The `og:image` is the PWA icon, not a social card.** Valid but square and
-   grayscale; a 1200×630 asset should replace it.
+1. **The `og:image` card is not in Inter.** See the limitation in
+   [section 7](#7-generated-ogimage-card) — it needs a committed font file.
 2. **`components/Nav.js` emits `<button>` inside `<a>`.** Same class of issue
    as fix #3; the `as={NextLink}` pattern applies.
 3. **`pages/_document.js` uses raw `<html>`/`<body>`** rather than `<Html>` and
