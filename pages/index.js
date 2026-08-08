@@ -47,19 +47,19 @@ const Index = () => {
           <Text color={secondaryTextColor[colorMode]} mb={4}>
             I grew up in California and Oregon as part of an entrepreneurial
             family which instilled a strong curiosity and work ethic from a
-            young age. I've since moved to Florida, where my curiosity continues
-            to thrive, alongside my desire to understand the inner working of
-            websites, code and technology in general.
+            young age. I&apos;ve since moved to Florida, where my curiosity
+            continues to thrive, alongside my desire to understand the inner
+            working of websites, code and technology in general.
           </Text>
           <Text color={secondaryTextColor[colorMode]} mb={4}>
             My favorite color is green. I love being outside, in the sunshine,
-            whether it's at the beach, at a park or in the back yard.
+            whether it&apos;s at the beach, at a park or in the back yard.
           </Text>
           <Text color={secondaryTextColor[colorMode]} mb={4}>
             My background in graphic design and writing help to bring a visually
             pleasing and engaging aesthetic to everything I create or work on. I
             enjoy new challenges, so if you have a project which could use a
-            fresh perspective, I'd love to hear from you.
+            fresh perspective, I&apos;d love to hear from you.
           </Text>
         </Flex>
         <Flex
