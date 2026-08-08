@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import Head from "next/head";
 import { Global, css } from "@emotion/react";
 import { DefaultSeo } from "next-seo";
 import {
@@ -72,6 +73,13 @@ const App = ({ Component, pageProps }) => {
         }
       />
       <GlobalStyle>
+        {/* Next's own default is `width=device-width` with no initial-scale,
+            so this has to be declared rather than dropped. It sits here, not
+            in _document.js, because next/head merges by meta name and lets a
+            page override it. */}
+        <Head>
+          <meta content="width=device-width, initial-scale=1" name="viewport" />
+        </Head>
         <DefaultSeo {...SEO} />
         <Component {...pageProps} />
       </GlobalStyle>

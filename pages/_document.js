@@ -7,7 +7,9 @@ class MyDocument extends Document {
       <Html lang="en">
         <Head>
           <meta content="IE=edge" httpEquiv="X-UA-Compatible" />
-          <meta content="width=device-width, initial-scale=1" name="viewport" />
+          {/* The viewport meta lives in pages/_app.js, not here. Next warns on
+              a viewport tag in _document's <Head> because _document renders
+              once on the server and a page cannot override it. */}
           <meta content="#ffffff" name="theme-color" />
           <meta content="#ffffff" name="msapplication-TileColor" />
           <meta
