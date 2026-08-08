@@ -106,7 +106,7 @@ const projects = [
     id: "interview-drill",
     title: "Interview Drill",
     description:
-      "A spaced-repetition trainer for frontend interview questions. Answer out loud, rate your recall, and the FSRS algorithm brings each question back on the day you are about to forget it. Next.js and TypeScript, with review history kept in the browser — no account and no backend.",
+      "A spaced-repetition trainer for frontend interview questions. Answer out loud, rate your recall, and the FSRS algorithm brings each question back on the day you are about to forget it. Next.js and TypeScript, with review history kept in the browser — no account and no backend. The repository also carries a Claude-powered generation route, rate-limited and shipped switched off, so the live demo depends on no key and no third-party host.",
     href: "https://interview-drill-demo.vercel.app",
     repoHref: "https://github.com/felipe-sq/interview-drill",
     initials: "ID",
@@ -118,6 +118,7 @@ const projects = [
       "Tailwind CSS",
       "Zustand",
       "ts-fsrs",
+      "Claude API",
       "Vitest",
     ],
     caseStudy: {
@@ -162,7 +163,9 @@ const projects = [
       outcome: [
         "The portfolio no longer links a hung page pointing at a squatted domain, and the thing that replaced it cannot fail that way: 60 questions across JavaScript, React, CSS, HTML and accessibility, and the web platform, all shipping with the build. Delete every environment file and the app still runs a full session end to end.",
         "The three pure modules — scheduler, queue, statistics — carry 62 unit tests between them, covering every rating, lapse behavior, due-date boundaries, session caps, streak gaps, and the JSON round trip that browser storage requires. They are the most reviewable code in the project, which is deliberate.",
-        "What is not done is written down rather than implied. An optional AI generation route is planned and specified — it has to degrade to the bundled bank when a key is absent, rate-limited, or failing, so it can never become the only path to a question. The bank is worth growing, and the constraint on that is not code, it is that every answer has to be good enough to trust in a real interview.",
+        "There is an AI question-generation route in the repository, built and tested, and constructed so that it can never become the only path to a question. With no key configured it reports itself unavailable, the panel that would offer it does not render at all, and every question comes from the bundled bank. Switched on or switched off, the demo still runs with no key and no third-party host — which is the one property the project exists to have, and the failure it refuses to be able to repeat.",
+        "It also declines to run in production with a key but no rate limiter, on the reasoning that a spend guard which fails open is worse than none at all: it reads as protection while billing without a ceiling. Two limits sit in front of any model call — one per visitor, one global daily cap — because a per-visitor limit on its own bounds nothing when the caller can change address. The generation modules and the route bring the suite to 148 tests, with the model call stubbed at the network boundary so refusals, rate-limit rejections and the fail-closed path can all be exercised deterministically.",
+        "What is not done is written down rather than implied. The bank is worth growing, and the constraint on that is not code — it is that every answer has to be good enough to trust in a real interview.",
       ],
       learned: [
         "An architectural risk does not show up in a code review. Nothing about the old project's code was wrong, and no amount of reading it would have predicted that its API host would be sold to a casino. The question a review cannot ask is what this software depends on to work at all, and whose lifespan that is.",
