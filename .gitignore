@@ -6,9 +6,11 @@ assets/.DS_Store
 .env*.local
 .vercel
 
-# Claude Code config is kept personal, not shared. Covers settings.local.json
-# (absolute paths, personal permission grants) and launch.json.
+# Editor and agent config is kept personal, not shared. Covers Claude Code's
+# settings.local.json (absolute paths, personal permission grants) and
+# launch.json, and any VS Code workspace settings.
 .claude/
+.vscode/
 
 # Agent tooling artifacts, regenerated on demand and per-machine.
 .agents/
