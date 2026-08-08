@@ -13,6 +13,23 @@ export default defineConfig([
   ]),
   ...next,
   {
+    // eslint-config-next does not enable this, so dead imports and variables
+    // inherited from the fork went unreported. `varsIgnorePattern: "^React$"`
+    // keeps the redundant-but-harmless `import React` in place; it is not worth
+    // a warning on every file under the modern JSX transform.
+    rules: {
+      "no-unused-vars": [
+        "warn",
+        {
+          args: "after-used",
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^React$",
+          ignoreRestSiblings: true,
+        },
+      ],
+    },
+  },
+  {
     files: ["next.config.js", "site.config.js", "scripts/**/*.js"],
     languageOptions: {
       sourceType: "commonjs",

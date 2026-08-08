@@ -4,7 +4,7 @@
 //
 // `initials` and `accent` drive the monogram tile the card draws in place of a
 // thumbnail image. Every accent clears 4.5:1 against the white monogram, so the
-// tile stays legible in both colour modes. The teal is the site accent, shared
+// tile stays legible in both color modes. The teal is the site accent, shared
 // with pages/api/og.js and safari-pinned-tab.svg.
 const projects = [
   {
@@ -38,7 +38,7 @@ const projects = [
     id: "simple-grocery-list",
     title: "Simple Grocery List",
     description:
-      "A demo grocery list app built with Next.js and TypeScript that runs entirely in the browser — colour-coded lists, tag filtering by aisle, and barcode scanning that fills in product names. No account and no backend: lists live in the browser tab, and the sign-in screen is a UI demonstration.",
+      "A demo grocery list app built with Next.js and TypeScript that runs entirely in the browser — color-coded lists, tag filtering by aisle, and barcode scanning that fills in product names. No account and no backend: lists live in the browser tab, and the sign-in screen is a UI demonstration.",
     href: "https://simple-grocery-list-demo.vercel.app/",
     initials: "SG",
     accent: "#2c7a6b",

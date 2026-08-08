@@ -1,12 +1,14 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-const prettier = require('prettier');
+const prettier = require("prettier");
 
-const { siteUrl } = require('../site.config');
+const { siteUrl } = require("../site.config");
 
 // Pages that must never appear in a sitemap.
-const EXCLUDED_ROUTES = new Set(['/404', '/500']);
+const EXCLUDED_ROUTES = new Set(["/404", "/500"]);
+
+const SITEMAP_PATH = "public/sitemap.xml";
 
 // Collect page routes the same way the previous globby pattern did:
 // 'pages/**/*{.js,.mdx}', excluding 'pages/_*.js' and 'pages/api'.
@@ -17,10 +19,10 @@ const collectPages = (dir) => {
     const entryPath = path.join(dir, entry.name);
 
     if (entry.isDirectory()) {
-      return entry.name === 'api' ? [] : collectPages(entryPath);
+      return entry.name === "api" ? [] : collectPages(entryPath);
     }
 
-    if (entry.name.startsWith('_')) {
+    if (entry.name.startsWith("_")) {
       return [];
     }
 
@@ -32,18 +34,22 @@ const collectPages = (dir) => {
 // 'pages/blog/index.js' -> '/blog'.
 const toRoute = (pagePath) => {
   const route = `/${path
-    .relative('pages', pagePath)
+    .relative("pages", pagePath)
     .split(path.sep)
-    .join('/')
-    .replace(/\.(js|mdx)$/u, '')
-    .replace(/(^|\/)index$/u, '')}`;
+    .join("/")
+    .replace(/\.(js|mdx)$/u, "")
+    .replace(/(^|\/)index$/u, "")}`;
 
-  return route === '/' ? route : route.replace(/\/$/u, '');
+  return route === "/" ? route : route.replace(/\/$/u, "");
 };
 
 (async () => {
-  const prettierConfig = await prettier.resolveConfig('./.prettierrc.js');
-  const routes = collectPages('pages')
+  // Resolve config the way Prettier itself does — from the file being
+  // formatted, walking up for any .prettierrc/package.json "prettier" key. The
+  // previous './.prettierrc.js' named a file the repo does not have, so this
+  // always returned null and the output silently used Prettier's defaults.
+  const prettierConfig = await prettier.resolveConfig(SITEMAP_PATH);
+  const routes = collectPages("pages")
     .map(toRoute)
     .filter((route) => !EXCLUDED_ROUTES.has(route))
     .sort();
@@ -57,17 +63,17 @@ const toRoute = (pagePath) => {
                         <url>
                             <loc>${`${siteUrl}${route}`}</loc>
                         </url>
-                    `
+                    `,
               )
-              .join('')}
+              .join("")}
         </urlset>
     `;
 
   // prettier.format() returns a Promise as of Prettier 3.
   const formatted = await prettier.format(sitemap, {
     ...prettierConfig,
-    parser: 'html'
+    parser: "html",
   });
 
-  fs.writeFileSync('public/sitemap.xml', formatted);
+  fs.writeFileSync(SITEMAP_PATH, formatted);
 })();

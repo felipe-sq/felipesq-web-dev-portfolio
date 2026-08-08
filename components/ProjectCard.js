@@ -1,5 +1,12 @@
 import React from "react";
-import { Flex, Link, Text, Heading, Stack, useColorMode } from "@chakra-ui/react";
+import {
+  Flex,
+  Link,
+  Text,
+  Heading,
+  Stack,
+  useColorMode,
+} from "@chakra-ui/react";
 
 const ProjectCard = ({ title, description, href, initials, accent }) => {
   const { colorMode } = useColorMode();

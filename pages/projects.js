@@ -1,16 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { NextSeo } from "next-seo";
-import {
-  useColorMode,
-  Heading,
-  Text,
-  Flex,
-  Stack,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Icon,
-} from "@chakra-ui/react";
+import { useColorMode, Heading, Text, Flex, Stack } from "@chakra-ui/react";
 import ProjectCard from "../components/ProjectCard";
 import Container from "../components/Container";
 import projects from "../data/projects";

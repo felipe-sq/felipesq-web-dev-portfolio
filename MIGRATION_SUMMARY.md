@@ -7,7 +7,7 @@ This document covers three phases of modernization work:
   **0 known vulnerabilities**. See
   [Phase 2](#phase-2-npm-standardization--dependency-cleanup) below, which
   supersedes Phase 1's "Remaining Vulnerabilities" and install instructions.
-- **Phase 3** — fixed the four pre-existing bugs Phase 2 catalogued but left
+- **Phase 3** — fixed the four pre-existing bugs Phase 2 cataloged but left
   alone, then wired the real deployed origin through the codebase and repaired
   the PWA manifest — uncovering three further latent bugs along the way. See
   [Phase 3](#phase-3-pre-existing-bug-fixes), which supersedes Phase 2's
@@ -495,7 +495,7 @@ from the web root, but this repo keeps them in `/static/favicons/`, so every
 
 `site.webmanifest` also shipped with `name` and `short_name` as **empty
 strings**, which is what an installed PWA or an Android "Add to Home screen"
-shortcut would have been labelled with. They now carry the site title and a
+shortcut would have been labeled with. They now carry the site title and a
 short form, matching `next-seo.config.js`:
 
 ```json
@@ -509,7 +509,7 @@ linked the manifest, which happens to work here but is left to the user agent;
 declaring `/` makes the install target explicit.
 
 Only paths and names changed — `theme_color`, `background_color`, `display`,
-and the tile colour are untouched, and no icon files were added, removed, or
+and the tile color are untouched, and no icon files were added, removed, or
 regenerated.
 
 ## 7. Generated `og:image` card
@@ -527,7 +527,7 @@ const tagline = SEO.description.split("|").pop().trim();
 ```
 
 The headline and tagline are derived from `next-seo.config.js`, so the card
-cannot drift from the page metadata, and the colours are the repo's own —
+cannot drift from the page metadata, and the colors are the repo's own —
 Chakra `gray.800`/`gray.400` for the surface and body text, plus the `#4a9885`
 accent from `safari-pinned-tab.svg`.
 
@@ -577,74 +577,152 @@ Confirmed against the production server:
   `application/manifest+json` and `application/xml`. The pre-fix paths (e.g.
   `/android-chrome-192x192.png`) confirm as `404`.
 
+---
+
+# Phase 4: open-items cleanup
+
+Cleared every remaining open item from Phase 3 except the `og:image` font
+limitation. Three of the items turned out to be stale or misstated, and closing
+one of them (#5) surfaced a visible bug nobody had logged.
+
+## 1. `components/Nav.js` no longer nests `<button>` in `<a>` (item 2)
+
+The last instance of the invalid-nesting pattern, present on every page:
+
+```javascript
+// Before — <a href="/"><button>Home</button></a>
+<NextLink href="/">
+  <Button variant="ghost" p={[1, 4]}>Home</Button>
+</NextLink>
+
+// After — <a class="chakra-button" href="/">Home</a>
+<Button as={NextLink} href="/" variant="ghost" p={[1, 4]}>Home</Button>
+```
+
+Same remedy as the `404.js` fix in Phase 3 §3. Both nav links were converted;
+the theme-toggle `IconButton` is a real button and was left as one. Verified in
+the prerendered output for `/`, `/projects`, and `/404`.
+
+## 2. The footer social icons were rendering empty — and were also nested
+
+Not previously logged. Closing item 5 meant opening `components/Footer.js`,
+where all three social buttons rendered as `<button aria-label="GitHub"></button>`
+— **no icon at all**, on every page.
+
+The cause is a Chakra v1 leftover the Phase 1 migration missed. `styles/theme.js`
+carried a `theme.icons` registry, and v1 resolved `<IconButton icon="github" />`
+by looking the string up in it. Chakra v2 removed that mechanism — `icon` takes a
+ReactElement — so each string resolved to nothing and rendered nothing. Phase 1
+fixed exactly this in `Nav.js` (string `"sun"`/`"moon"` → `<SunIcon />`), but the
+footer was missed.
+
+Three things were wrong in the same markup:
+
+| Problem                                                                          | Fix                                                   |
+| -------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `icon="github"` string never resolved → empty buttons                            | Real icon components in the new `components/icons.js` |
+| `<Link><IconButton/></Link>` → `<a><button></button></a>`                        | `IconButton as="a"` — one element                     |
+| `icon="github"` also set on `<Link>`, leaking to the DOM as an invalid attribute | Removed                                               |
+
+`components/icons.js` builds `GitHubIcon`, `LinkedInIcon`, and `MailIcon` with
+`createIcon` from `@chakra-ui/icons`, reusing the **exact SVG paths** that were
+already in `theme.js` — the delivery mechanism changed, the artwork did not. The
+external links carry `rel="noopener noreferrer"`; the `mailto:` link correctly
+does not.
+
+**This is a visible change**: the footer now shows three icons where it showed
+three blank spaces.
+
+## 3. Dead code removed (items 3, 4, 5)
+
+- **`components/Track.js`** — deleted. Spotify "top tracks" widget from the fork
+  origin, 57 lines, no consumers.
+- **`styles/theme.js` icon registry** — deleted, all 160 lines of it. Item 4
+  flagged only `jj_circle_logo` (the fork owner's initials), but with the footer
+  moved to real components the _entire_ registry was dead: it is a v1 API that
+  v2 does not read. `theme.js` is now 17 lines — fonts and font weights, which
+  is all Chakra v2 ever consumed from it. The now-unused `import React` went too.
+- **`components/Footer.js` `gitFollow` iframe** — deleted along with its
+  `iframe()` helper and the commented-out `dangerouslySetInnerHTML` consumer.
+
+## 4. Unused imports, and the rule that finds them (item 6)
+
+Added `no-unused-vars: "warn"` to `eslint.config.mjs`, configured with
+`varsIgnorePattern: "^React$"` so the redundant-but-harmless `import React` does
+not warn on every file.
+
+Cleaned: `pages/projects.js` (`useState`, `useEffect`, `Input`, `InputGroup`,
+`InputRightElement`, `Icon`) and `components/Container.js` (`NextLink`,
+`Button`, `Box`, `IconButton`). `components/ProjectCard.js` was already clean —
+its `Box`/`Icon` went out with the monogram-tile rewrite.
+
+The new rule then found two things the item had not listed:
+
+- `components/Container.js` defined a **second `StickyNav`** styled component,
+  a copy of the one in `Nav.js`, that nothing rendered. Removed, along with the
+  now-unused `styled` import.
+- `components/Nav.js` computed `bgColor` and `primarytextColor` and applied
+  neither.
+
+## 5. Smaller corrections (items 8, 10, 11)
+
+- **`pages/_document.js`** now uses `<Html>` from `next/document` instead of a
+  raw `<html>`. Item 8 also called for `<Body>` — **there is no such export**;
+  `next/document` provides `Html`, `Head`, `Main`, and `NextScript`, and a raw
+  `<body>` is the documented form. Only the one tag changed. `lang="en"` still
+  reaches the output.
+- **`scripts/generate-sitemap.js`** resolved `./.prettierrc.js`, a file the repo
+  does not have, so `resolveConfig` always returned `null`. It now resolves from
+  the file being written, via a new `SITEMAP_PATH` constant that also replaces
+  the hard-coded output path further down.
+- **Prettier pass** over the repo: `pages/_document.js`,
+  `scripts/generate-sitemap.js`, `README (portfolio).md`, and
+  `components/ProjectCard.js`. The root `index.html` and `styles/styles.scss`
+  remain non-conforming; both belong to the legacy static site and fall outside
+  the `npm run prettier` globs.
+
+## 6. US spelling
+
+`data/projects.js`, `pages/api/og.js`, and this document used British spellings
+("colour", "labelled", "catalogued") — author drift, not a repo convention.
+Nothing in `CLAUDE.md`, `AGENTS.md`, `.claude/`, or the `lang="en"` document tag
+specified a locale. All normalized to US spelling. The one user-visible instance
+was the Simple Grocery List card copy: "colour-coded lists" → "color-coded
+lists".
+
+## Verification
+
+```bash
+npm run lint    # 0 errors, 0 warnings
+npm run build   # prebuild ran; ✓ compiled; all 4 routes prerendered
+npm start       # / 200, /projects 200, /nope 404, /sitemap.xml 200, /api/og 200
+```
+
+`npm run lint` is now **fully clean** — the `next/image` advisory that had been
+the standing warning went away with the monogram-tile rewrite.
+
+Confirmed in the prerendered output of `/`, `/projects`, and `/404`:
+
+- The nav emits `<a class="chakra-button" href="/">Home</a>` — one element, no
+  nested button. The theme toggle remains a standalone `<button>`.
+- The footer emits three `<a>` elements, each containing a rendered `<svg>`.
+- `<html lang="en">` is present.
+- `/api/og` still returns `200 image/png`, decoding as `PNG image data, 1200 x 630`.
+- `sitemap.xml` still lists only `/` and `/projects`.
+
 ## Remaining open items
 
-Item 1 has since been resolved; everything else below is still open. Grouped by
-priority, with enough detail to pick up cold in a later session.
-
-### Content — visible on the live site
-
-1. ~~**Project cards use the fork origin's album art as thumbnails.**~~
-   **Resolved.** This repo is a fork of a musician's personal site, and the
-   images under `public/` were that musician's record covers rather than
-   screenshots of the projects they labelled. `oceans_200.jpg` carried **another
-   person's name printed on it** while being presented as this portfolio's work,
-   which made it more than a cosmetic issue, and the same three projects
-   appeared on both pages with _different_ covers each time — confirming the
-   images were never meant to correspond to anything.
-
-   The fix did not need screenshots after all. `components/ProjectCard.js` now
-   draws a monogram tile — the project's initials on a coloured rounded square —
-   in place of the `<img>`, with `initials` and `accent` supplied per project by
-   the new `data/projects.js`. Each accent clears 4.5:1 against the white
-   monogram so the tile holds up in both colour modes, and the tile is
-   `aria-hidden` because the heading beside it already names the project.
-
-   All five `*_200.*` files have been deleted from `public/`. Two latent bugs
-   went out with the `<img>`: `alt={image}` was announcing the file path as alt
-   text, and `padding`/`ml`/`mr` were being passed to a plain `<img>`, where
-   they are not valid HTML attributes and had no effect.
-
-2. **`components/Nav.js` emits `<button>` inside `<a>`** — interactive content
-   nested in an anchor, which is invalid HTML, on every page of the site. Same
-   class of issue as fix #3 above and the same remedy: `as={NextLink}`.
-
-### Dead code inherited from the fork
-
-3. **`components/Track.js` is never imported.** A Spotify "top tracks" ranking
-   widget from the origin site. 57 lines, no consumers.
-4. **`styles/theme.js` defines a `jj_circle_logo` icon** that nothing
-   references. The `jj` prefix is the origin owner's initials.
-5. **`components/Footer.js` has a dead `gitFollow` iframe string** whose only
-   consumer is commented out on line 52.
-6. **Unused imports.** `eslint-config-next` does not enable `no-unused-vars`, so
-   none of these are reported:
-   - `pages/projects.js` — `useState`, `useEffect`, `Input`, `InputGroup`,
-     `InputRightElement`, `Icon` (leftovers from a removed search box)
-   - `components/Container.js` — `NextLink`, `Button`, `Box`, `IconButton`
-   - `components/ProjectCard.js` — `Box`, `Icon`
-
-   Adding `"no-unused-vars": "warn"` to `eslint.config.mjs` would surface these
-   and prevent recurrence. Note the bare `import React` in most files is _not_
-   in this list — it is redundant under the modern JSX transform but harmless.
-
-### Cosmetic and advisory
-
-7. **The `og:image` card is not in Inter.** See the limitation in
-   [section 7](#7-generated-ogimage-card) — it needs a committed font file.
-   Deliberately deferred: the card renders correctly, and adding a font file
-   introduces a failure mode the current version does not have.
-8. **`pages/_document.js` uses raw `<html>`/`<body>`** rather than `<Html>` and
-   `<Body>` from `next/document`. It builds and renders correctly today, but the
-   documented API is the imported components.
-9. **`components/ProjectCard.js:43`** — the `next/image` advisory, unchanged.
-   This is the one warning `npm run lint` still reports.
-10. **`scripts/generate-sitemap.js:45` resolves `./.prettierrc.js`**, which does
-    not exist — the repo has only `.prettierignore`. `resolveConfig` returns
-    `null`, and `{...null}` is `{}`, so the script works and the output is
-    formatted with Prettier's defaults. Misleading rather than broken.
-11. **Pre-existing Prettier non-conformance** in `pages/_document.js`,
-    `scripts/generate-sitemap.js`, `README (portfolio).md`,
-    `.vscode/settings.json`, and `.claude/settings.local.json` (single quotes vs.
-    the double-quote default). Left alone to keep diffs scoped to real changes;
-    `npm run prettier` would fix all five in one pass.
+1. **The `og:image` card is not in Inter.** The only item carried over from
+   Phase 3. `@vercel/og` bundles a single Noto Sans face, so the `fontWeight: 700`
+   on the headline has no effect. See the limitation in
+   [section 7](#7-generated-ogimage-card). Deliberately deferred: the card
+   renders correctly, and committing a font file introduces a failure mode the
+   current version does not have.
+2. **`next/font` is still not used.** Inter loads via a render-blocking
+   stylesheet `<link>` (Phase 3 §1). Moving to `next/font` would self-host the
+   face and drop the request, but with the Pages Router it means threading a
+   generated CSS variable through the Chakra theme's `fonts.body` — a refactor,
+   not a bug fix. Would also supply the font file item 1 needs.
+3. **Prettier non-conformance in the legacy static site** — the root
+   `index.html` and `styles/styles.scss`. Outside the `npm run prettier` globs
+   and unrelated to the Next.js app.

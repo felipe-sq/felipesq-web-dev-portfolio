@@ -11,7 +11,7 @@ const SIZE = { width: 1200, height: 630 };
 // cannot drift from the page metadata; the name is already the headline.
 const tagline = SEO.description.split("|").pop().trim();
 
-// Colours are the repo's own: Chakra gray.800/gray.400 for the surface and body
+// Colors are the repo's own: Chakra gray.800/gray.400 for the surface and body
 // text, and the accent from safari-pinned-tab.svg.
 const BACKGROUND = "#1a202c";
 const MUTED = "#a0aec0";

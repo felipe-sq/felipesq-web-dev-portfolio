@@ -15,16 +15,6 @@ const StickyNav = styled(Flex)`
 const Nav = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
-  const bgColor = {
-    light: "white",
-    dark: "gray.900",
-  };
-
-  const primarytextColor = {
-    light: "black",
-    dark: "white",
-  };
-
   const navBgColor = {
     light: "rgba(255, 255, 255, 0.8)",
     dark: "rgba(23, 25, 35, 0.8)",
@@ -45,17 +35,13 @@ const Nav = () => {
         mb={8}
         mx="auto"
       >
-        <NextLink href="/">
-          <Button variant="ghost" p={[1, 4]}>
-            Home
-          </Button>
-        </NextLink>
+        <Button as={NextLink} href="/" variant="ghost" p={[1, 4]}>
+          Home
+        </Button>
         <Box>
-          <NextLink href="/projects">
-            <Button variant="ghost" p={[1, 4]}>
-              Projects
-            </Button>
-          </NextLink>
+          <Button as={NextLink} href="/projects" variant="ghost" p={[1, 4]}>
+            Projects
+          </Button>
           <IconButton
             aria-label="Toggle dark mode"
             icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />}
