@@ -163,7 +163,7 @@ const projects = [
       outcome: [
         "The portfolio no longer links a hung page pointing at a squatted domain, and the thing that replaced it cannot fail that way: 60 questions across JavaScript, React, CSS, HTML and accessibility, and the web platform, all shipping with the build. Delete every environment file and the app still runs a full session end to end.",
         "The three pure modules — scheduler, queue, statistics — carry 62 unit tests between them, covering every rating, lapse behavior, due-date boundaries, session caps, streak gaps, and the JSON round trip that browser storage requires. They are the most reviewable code in the project, which is deliberate.",
-        "There is an AI question-generation route in the repository, built and tested, and constructed so that it can never become the only path to a question. With no key configured it reports itself unavailable, the panel that would offer it does not render at all, and every question comes from the bundled bank. Switched on or switched off, the demo still runs with no key and no third-party host — which is the one property the project exists to have, and the failure it refuses to be able to repeat.",
+        "There is an AI question-generation route in the repository, built and tested, and constructed so that it can never become the only path to a question. With no key configured it reports itself unavailable, the panel that would offer it does not render at all, and every question comes from the bundled bank. On or off, a full session never needs a key or a third-party host — which is the one property the project exists to have, and the failure it refuses to be able to repeat.",
         "It also declines to run in production with a key but no rate limiter, on the reasoning that a spend guard which fails open is worse than none at all: it reads as protection while billing without a ceiling. Two limits sit in front of any model call — one per visitor, one global daily cap — because a per-visitor limit on its own bounds nothing when the caller can change address. The generation modules and the route bring the suite to 148 tests, with the model call mocked at the module boundary so refusals, rate-limit rejections and the fail-closed path can all be exercised deterministically.",
         "What is not done is written down rather than implied. The bank is worth growing, and the constraint on that is not code — it is that every answer has to be good enough to trust in a real interview.",
       ],
@@ -238,10 +238,60 @@ const projects = [
     id: "secret-recipes",
     title: "Secret Recipes",
     description:
-      "A React app for collecting and sharing recipes — family standbys, finds from a cookbook, or your own inventions.",
-    href: "https://frontend-lovat-sigma.vercel.app/login",
+      "Paste a recipe in any shape and it comes back as structured ingredients — quantity, unit, item, preparation — which makes scaling, unit conversion and a merged shopping list fall out of the same data. The parser is about 80% accurate and the app is designed around that: the original line is never overwritten, so a wrong reading is visible and correctable instead of silently wrong.",
+    href: "https://secret-recipes-demo.vercel.app",
+    repoHref: "https://github.com/felipe-sq/secret-recipes",
     initials: "SR",
     accent: "#6b46c1",
+    stack: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Vitest"],
+    caseStudy: {
+      summary:
+        "A 2021 team project whose backend died with Heroku's free tier, rebuilt around the one problem the recipe domain actually has. The decision that shaped it was refusing to rebuild it as what it used to be.",
+      problem: [
+        "The original was a build-week project split across two repositories: a Create React App frontend I worked on, and an Express API on Heroku that another team owned. Heroku retired its free tier in November 2022 and took the API and its database with it. The frontend still renders; the login form fails with a CORS error, which is misleading — there is no server left on the other end to send the header.",
+        "The obvious repair was the one I had already done for Water My Plants: consolidate both halves into one repository, modernize, add a backend, redeploy.",
+        "That would have been wrong, and recognizing it was the actual work. A recipe box rebuilt that way is signup, token auth, user-scoped CRUD and Postgres — feature for feature what Water My Plants already is. I would have spent the effort to end up with two portfolio entries demonstrating one skill set, where the second adds nothing.",
+      ],
+      constraints: [
+        "No account and no database. Recipes live in the browser, so there is no signup wall between a reader and the demo, and nothing to keep alive or pay for. The thing that killed the original was depending on a service somebody else operated.",
+        "The app has to work with every environment file deleted. There are no keys and no third-party services to configure.",
+        "Ingredient text is written by people, not machines. Vulgar fractions, mixed numbers, ranges, abbreviations with and without periods, pack sizes in brackets, and preparation notes that may or may not follow a comma.",
+        "The parser will never be fully accurate. Every site and every cook writes ingredients differently and the remainder is unbounded, so the design has to survive being wrong rather than assume it won't be.",
+      ],
+      approach: [
+        "Find what the domain offers that the alternative doesn't. Plants have no interesting data problem; recipes do. Turning \"2 1/2 c. flour, sifted\" into structured fields is a real parsing problem, and once ingredients are structured, recipe scaling, unit conversion and a cross-recipe shopping list are all queries against the same shape. It is also what the 2021 app promised on its own landing page and never shipped.",
+        "Make being wrong safe rather than rare. The original text of every ingredient is kept and never rewritten — not by editing, not by scaling. Structured fields are an overlay on top of it, and the item name falls back to the whole line when nothing can be isolated, so it is never empty.",
+        "Keep every judgment call in one testable layer. All arithmetic, parsing and unit selection lives in plain functions with no framework around them, and that layer is the entire tested surface.",
+      ],
+      implementation: [
+        "The parser is a pipeline of small stages, each consuming a prefix of the line or declining to. A stage that doesn't match simply doesn't consume, which is exactly the partial-result behavior the overlay model needs. The alternative — one large regular expression with eight optional groups — produces no partial result at all: the line either matches or it doesn't.",
+        "Quantities are exact fractions rather than decimals. The usual justification is wrong, and checking it mattered: a single (1/3) × 3 really is exactly 1 in floating point. What breaks is accumulation, which is the entire job of a shopping list, and equality — printing \"½ cup\" requires knowing a value is one half, which float comparison cannot tell you reliably.",
+        "Each unit carries the denominators it can actually be measured in, because that is a fact about measuring cups rather than about arithmetic. Teaspoons come in eighths and cups do not, so scaling a quarter cup by 1.5 produces six tablespoons rather than an unmeasurable three-eighths of a cup.",
+        "URL import reads the schema.org data most recipe sites already publish, through a single route handler that holds no credentials. The extraction itself is a pure function tested against saved pages, and the network code is separate so the interesting half is testable offline.",
+      ],
+      challenges: [
+        "Reading a capital T as a teaspoon. Unit lookup folded case before matching, so \"3 T. butter\" became three teaspoons instead of three tablespoons. In recipe convention capital T is tablespoon and lowercase t is teaspoon — the one place case carries meaning — and the error is threefold in the direction that ruins the dish.",
+        "Silently guessing a density. The weight table matched the bare word \"flour\" as a suffix, so almond flour quietly took all-purpose density: 120 g/cup against its real 96. It produced a confident, plausible, wrong number, which is the exact failure the table exists to prevent. Suffix matching is now restricted to multi-word entries, so almond flour returns no answer at all.",
+        "A scaling rule that was right for one line and wrong for another. Anything mentioning the pan was marked unscalable, which is correct for \"butter, for greasing the griddle\" and wrong for \"1 cup flour, plus more for dusting\" — there the stated cup is a real measurement, and doubling the recipe was leaving the flour alone.",
+        "Answers that were exact and useless. Scaling a cookie recipe by 1.5 rendered its flour as \"54 tablespoons.\" Correct, measurable, and nothing a person would do. The first fix searched for the largest unit that fit and produced \"1 pint + 22 tablespoons,\" which is the same mistake wearing a different hat.",
+      ],
+      solution: [
+        "Amounts render the way a cookbook writes them: \"3 cups + 6 tablespoons,\" with the whole part in the smallest unit that holds one. Both of those bugs came out of opening the running app rather than from the test suite, which is the argument for doing it.",
+        "Three features refuse to answer rather than guess, and each refusal is the feature. A volume-to-weight conversion for an unknown ingredient says so instead of falling back to the density of water. A shopping list that gets one cup of flour from one recipe and 200 grams from another shows both amounts side by side, with a note explaining that combining them would mean assuming a density. Scaling warns about leaveners instead of applying a sublinear curve, because there is no defensible exponent for one.",
+        "Two invariants are asserted over the whole fixture corpus: the original line comes back byte for byte, and the item name is never empty. They are what let an imperfect parser ship.",
+      ],
+      outcome: [
+        "397 tests, all in the logic layer, with no component tests by design. Verified against live recipe sites and confirmed to hold its guards on the deployed version.",
+        "The README states the limitations before a reader can discover them: URL import fails on Cloudflare-fronted sites like NYT Cooking and falls back to reading the page as text, volume-to-weight covers about thirty ingredients, flour density varies by 12% with how you fill the cup, and scaling never rewrites cooking times or step text.",
+        "The repository also carries a decision log — including one correction, where the justification I had written for exact fractions turned out to be arithmetically false and had to be replaced with a true one.",
+      ],
+      learned: [
+        "Choosing what to build was worth more than any implementation decision in it. The tempting repair would have produced a competent second copy of a project I already had. Asking what this domain could do that the other one couldn't is what made the rebuild worth doing at all.",
+        "Designing for a permanently imperfect component beats chasing the last few percent. The parser will always miss cases. Keeping the original text visible turned that from a defect into a correctable suggestion, and it cost one field.",
+        "Refusing to answer is a legitimate feature, and the hardest one to keep. Every refusal here is a place where a plausible number was available and would have been wrong in a way nobody could see.",
+        "Running the thing found what the tests could not. Every arithmetic bug was caught by a test; every bug about whether the output was usable by a human — 54 tablespoons, prices embedded in ingredient names, butter listed as \"to taste\" — was caught by opening the app and reading it.",
+      ],
+    },
   },
   {
     id: "simple-grocery-list",
