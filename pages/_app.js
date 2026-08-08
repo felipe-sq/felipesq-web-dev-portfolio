@@ -12,6 +12,7 @@ import * as Fathom from "fathom-client";
 import theme from "../styles/theme";
 import { prismLightTheme, prismDarkTheme } from "../styles/prism";
 import SEO from "../next-seo.config";
+import siteConfig from "../site.config";
 import "../styles/styles.scss";
 
 const GlobalStyle = ({ children }) => {
@@ -54,7 +55,9 @@ const App = ({ Component, pageProps }) => {
   useEffect(() => {
     if (process.env.NODE_ENV === "production") {
       Fathom.load(process.env.NEXT_PUBLIC_FATHOM_SITE_ID, {
-        includedDomains: ["https://github.com/felipe-sq"],
+        // Fathom matches on bare hostnames; a full URL here never matches, so
+        // pageviews were being dropped.
+        includedDomains: siteConfig.analyticsDomains,
       });
     }
   }, []);

@@ -41,17 +41,16 @@ const Error = () => {
             I&apos;m guessing you spelled something wrong. Can you double check
             that URL?
           </Text>
-          <NextLink href="/" passHref>
-            <Button
-              as="a"
-              p={[1, 4]}
-              w="250px"
-              fontWeight="bold"
-              m="3rem auto 0"
-            >
-              Return Home
-            </Button>
-          </NextLink>
+          <Button
+            as={NextLink}
+            href="/"
+            p={[1, 4]}
+            w="250px"
+            fontWeight="bold"
+            m="3rem auto 0"
+          >
+            Return Home
+          </Button>
         </Flex>
       </Stack>
     </Container>

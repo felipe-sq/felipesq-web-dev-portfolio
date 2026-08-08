@@ -1,24 +1,11 @@
 import React from "react";
-import {
-  Flex,
-  Box,
-  Link,
-  Text,
-  Heading,
-  Stack,
-  Icon,
-  useColorMode,
-} from "@chakra-ui/react";
+import { Flex, Link, Text, Heading, Stack, useColorMode } from "@chakra-ui/react";
 
-const ProjectCard = ({ title, description, href, image }) => {
+const ProjectCard = ({ title, description, href, initials, accent }) => {
   const { colorMode } = useColorMode();
   const borderColor = {
     light: "gray.200",
     dark: "gray.600",
-  };
-  const iconColor = {
-    light: "gray.1000",
-    dark: "white",
   };
 
   return (
@@ -40,14 +27,24 @@ const ProjectCard = ({ title, description, href, image }) => {
           borderRadius={4}
           p={4}
         >
-          <img
-            src={image}
-            alt={image}
-            width="40px"
-            padding="20px"
-            ml={2}
+          {/* Decorative: the heading beside it already names the project, so
+              the monogram is hidden from screen readers rather than read out. */}
+          <Flex
+            aria-hidden="true"
+            align="center"
+            justify="center"
+            flexShrink={0}
+            boxSize="48px"
             mr={4}
-          />
+            borderRadius="md"
+            bg={accent}
+            color="white"
+            fontSize="lg"
+            fontWeight="bold"
+            letterSpacing="tight"
+          >
+            {initials}
+          </Flex>
           <Stack>
             <Heading
               as="h4"

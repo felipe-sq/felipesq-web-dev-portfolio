@@ -13,8 +13,10 @@ import {
 } from "@chakra-ui/react";
 import ProjectCard from "../components/ProjectCard";
 import Container from "../components/Container";
+import projects from "../data/projects";
+import siteConfig from "../site.config";
 
-const url = "https://github.com/felipe-sq";
+const url = `${siteConfig.siteUrl}/projects`;
 const title = "Felipe Slaughter-Quintero | Coding with Heart";
 const description =
   "Coding and design website design by Felipe Slaughter-Quintero";
@@ -95,24 +97,16 @@ const Projects = () => {
             <Heading letterSpacing="tight" mb={4} size="xl" fontWeight={700}>
               Individual projects:
             </Heading>
-            <ProjectCard
-              title="Chuck Norris Joke Generator"
-              description="This project was created with React and features a joke generator tailored to the Chuck Norris fandom!"
-              href="https://chuck-norris-jokes-chi.vercel.app"
-              image="/juniper_200.jpg"
-            />
-            <ProjectCard
-              title="Water My Plants"
-              description="This project was created with React and is designed to allow users to add and manage plants and their water schedules!"
-              href="https://watermyplants21-mj7zvundd-tt92-water.vercel.app"
-              image="/beginnings_200.jpeg"
-            />
-            <ProjectCard
-              title="Secret Recipes"
-              description="Secret Recipes is a React app designed to help users find and share recipes, whether they are family recipes, favorites found online or in cookboooks, or unique creations!"
-              href="https://frontend-lovat-sigma.vercel.app/login"
-              image="/oceans_200.jpg"
-            />
+            {projects.map((project) => (
+              <ProjectCard
+                key={project.id}
+                title={project.title}
+                description={project.description}
+                href={project.href}
+                initials={project.initials}
+                accent={project.accent}
+              />
+            ))}
           </Flex>
         </Stack>
       </Container>
