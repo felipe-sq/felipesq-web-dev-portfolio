@@ -1,2 +1,2 @@
 User-agent: *
-Sitemap: https://joshjacobsonmusic.com/sitemap.xml
+Sitemap: https://www.felipesq.dev/sitemap.xml

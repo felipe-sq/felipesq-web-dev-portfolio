@@ -13,8 +13,9 @@ import {
 } from "@chakra-ui/react";
 import ProjectCard from "../components/ProjectCard";
 import Container from "../components/Container";
+import siteConfig from "../site.config";
 
-const url = "https://github.com/felipe-sq";
+const url = `${siteConfig.siteUrl}/projects`;
 const title = "Felipe Slaughter-Quintero | Coding with Heart";
 const description =
   "Coding and design website design by Felipe Slaughter-Quintero";

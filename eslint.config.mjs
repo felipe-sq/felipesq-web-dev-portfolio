@@ -13,7 +13,7 @@ export default defineConfig([
   ]),
   ...next,
   {
-    files: ["next.config.js", "scripts/**/*.js"],
+    files: ["next.config.js", "site.config.js", "scripts/**/*.js"],
     languageOptions: {
       sourceType: "commonjs",
       globals: {

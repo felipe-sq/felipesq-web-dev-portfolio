@@ -1,12 +1,17 @@
 # Migration Summary
 
-This document covers two phases of modernization work:
+This document covers three phases of modernization work:
 
 - **Phase 1** — React 18 + Next.js 16 + Chakra UI v2 + Emotion v11 migration.
 - **Phase 2** — npm standardization, dead-dependency removal, and reaching
   **0 known vulnerabilities**. See
   [Phase 2](#phase-2-npm-standardization--dependency-cleanup) below, which
   supersedes Phase 1's "Remaining Vulnerabilities" and install instructions.
+- **Phase 3** — fixed the four pre-existing bugs Phase 2 catalogued but left
+  alone, then wired the real deployed origin through the codebase and repaired
+  the PWA manifest — uncovering three further latent bugs along the way. See
+  [Phase 3](#phase-3-pre-existing-bug-fixes), which supersedes Phase 2's
+  "Known issues".
 
 ---
 
@@ -297,6 +302,9 @@ present, and `DefaultSeo` emits title, description, robots, canonical, and
 
 ## Known issues (pre-existing, not introduced here)
 
+> **Superseded by [Phase 3](#phase-3-pre-existing-bug-fixes).** Items 1–4 are
+> fixed; item 5 remains an open advisory. Kept here for the diagnosis.
+
 1. **The Google Fonts `<link>` never reaches the document.** In
    `pages/_document.js`, `<GoogleFonts>` renders as a direct child of `<html>`
    rather than inside `<Head>`, so Next drops it. Verified against the
@@ -324,3 +332,223 @@ present, and `DefaultSeo` emits title, description, robots, canonical, and
 
 5. **`components/ProjectCard.js:43`** uses a raw `<img>`; ESLint advises
    `next/image`. Left as a warning since swapping it changes layout behavior.
+
+---
+
+# Phase 3: pre-existing bug fixes
+
+Sections 1–4 fix items 1–4 of Phase 2's "Known issues". Item 5 (the
+`next/image` advisory) is unchanged — it is a lint warning, not a bug, and
+swapping the `<img>` would change layout behavior.
+
+Sections 5 and 6 cover work that followed from those fixes: consolidating the
+deployed origin (which exposed a dead `og:image` and a Fathom config that
+silently dropped every pageview) and repairing the PWA manifest.
+
+## 1. Google Fonts now actually loads
+
+`pages/_document.js` rendered `<GoogleFonts>` as a direct child of `<html>`,
+outside `<Head>`, so Next dropped it and the site silently fell back to system
+fonts even though `styles/theme.js` asks for Inter.
+
+Replaced the deprecated `next-google-fonts` wrapper with a plain stylesheet
+`<link>` inside `<Head>`, alongside a `preconnect` to `fonts.googleapis.com`
+(the `fonts.gstatic.com` preconnect was already there):
+
+```javascript
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+/>
+```
+
+`next-google-fonts` was then uninstalled — nothing else imported it. Direct
+dependencies: 11 + 4 dev. `npm audit` still reports 0.
+
+**This is a visible change**: pages now render in Inter rather than the
+system font stack. That is the intended behavior of `styles/theme.js`.
+
+`next/font` was considered and skipped: with the Pages Router it means moving
+font setup into `_app.js` and threading a generated CSS variable through the
+Chakra theme's `fonts.body`. Worth doing later to self-host and cut the
+render-blocking request, but it is a refactor rather than a bug fix.
+
+## 2. Sitemap generation now runs, and emits one `<loc>` per page
+
+Two separate defects:
+
+- **It never ran.** `scripts/generate-sitemap.js` was invoked from the
+  `webpack()` hook in `next.config.js`, and the build uses Turbopack, which
+  never calls it. Moved to a `prebuild` npm script — npm runs `prebuild`
+  automatically before `build`, so `npm run build` now regenerates the sitemap.
+  The dead `webpack()` hook was removed from `next.config.js`.
+
+- **Every `<loc>` was identical.** The generator computed the page list but
+  mapped over it with `() =>`, discarding the path and hard-coding one URL.
+  Added a `toRoute()` that derives the route from the file path
+  (`pages/index.js` → `/`, `pages/projects.js` → `/projects`,
+  `pages/blog/index.js` → `/blog`), sorts the results, and prefixes `SITE_URL`.
+
+Error pages are now excluded (`/404`, `/500`) — they had been included by the
+original glob and do not belong in a sitemap.
+
+The base URL comes from `site.config.js` (see
+[the canonical origin](#5-canonical-origin-consolidated-into-siteconfigjs)).
+
+## 3. `pages/404.js` no longer nests `<a>` inside `<a>`
+
+The legacy `<NextLink passHref>` + `<Button as="a">` pattern produced
+`<a href="/"><a>Return Home</a></a>` under Next 13+, which renders its own
+anchor.
+
+```javascript
+// Before
+<NextLink href="/" passHref>
+  <Button as="a" ...>Return Home</Button>
+</NextLink>
+
+// After
+<Button as={NextLink} href="/" ...>Return Home</Button>
+```
+
+This is the Chakra v2 + Next 13+ idiom and yields a single element —
+verified in the prerendered output:
+`<a class="chakra-button css-skd8b6" href="/">Return Home</a>`.
+
+Note this differs from the `a082253` fix applied to `components/Nav.js`, which
+wraps `<Button>` in `<NextLink>` and so emits `<a><button>…</button></a>`.
+That is also invalid (interactive content inside an anchor) but was left alone
+as out of scope — see [Remaining](#remaining-open-items).
+
+## 4. `package.json` metadata
+
+| Field            | Before                          | After                                                             |
+| ---------------- | ------------------------------- | ----------------------------------------------------------------- |
+| `author.url`     | `https://joshjacobsonmusic.com` | `https://github.com/felipe-sq`                                    |
+| `repository.url` | `https://github.com/fslauq/`    | `git+https://github.com/felipe-sq/felipesq-web-dev-portfolio.git` |
+| `bugs.url`       | —                               | `…/felipesq-web-dev-portfolio/issues`                             |
+
+`repository.url` now matches the actual `origin` remote. `author.url` and the
+new `homepage` field point at the deployed site.
+
+## 5. Canonical origin consolidated into `site.config.js`
+
+The deployed origin is **`https://www.felipesq.dev`**. Before this, seven
+places carried the placeholder `https://github.com/felipe-sq` (a GitHub profile,
+not a website) or the fork's `joshjacobsonmusic.com`. New `site.config.js` is
+the single source of truth:
+
+```javascript
+const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.felipesq.dev"
+).replace(/\/$/u, "");
+```
+
+It is CommonJS so `scripts/generate-sitemap.js` can `require()` it while the
+Next.js pages import it as a default export. Setting `NEXT_PUBLIC_SITE_URL`
+overrides it per environment (verified: a preview URL flows through to
+`siteUrl`, `siteHost`, and `analyticsDomains`). Registered as `commonjs` in
+`eslint.config.mjs` alongside `next.config.js`.
+
+Consumers updated:
+
+| File                          | Was                                    | Now                                 |
+| ----------------------------- | -------------------------------------- | ----------------------------------- |
+| `next-seo.config.js`          | `canonical` / `openGraph.url` = GitHub | `siteConfig.siteUrl`                |
+| `next-seo.config.js`          | `og:image` = a GitHub **profile page** | a real, resolvable PNG              |
+| `pages/projects.js`           | `canonical` = site root                | `${siteUrl}/projects`               |
+| `pages/_app.js`               | Fathom `includedDomains` = a full URL  | `analyticsDomains` (bare hostnames) |
+| `scripts/generate-sitemap.js` | local `SITE_URL` const                 | `require('../site.config')`         |
+| `public/robots.txt`           | `joshjacobsonmusic.com/sitemap.xml`    | `www.felipesq.dev/sitemap.xml`      |
+| `package.json`                | `author.url` = GitHub profile          | the site, plus a `homepage` field   |
+
+Two of these were latent bugs in their own right:
+
+- **`og:image` pointed at an HTML page**, so no social platform could render a
+  preview. It now points at `/static/favicons/android-chrome-512x512.png` with
+  correct `width`/`height`/`type` — valid and resolvable (verified `200
+image/png`), but it is the square grayscale PWA icon. A purpose-built
+  1200×630 card should replace it; there is a `TODO` at the call site.
+- **Fathom analytics never recorded a pageview.** `includedDomains` was
+  `["https://github.com/felipe-sq"]`, and Fathom matches on _bare hostnames_ —
+  a URL can never match, so every pageview was filtered out. Now
+  `["www.felipesq.dev", "felipesq.dev"]`, covering the apex redirect.
+
+`public/robots.txt` is the one place the domain is still written literally; it
+is a static file and cannot read the env var. Preview deployments do not need it
+— Vercel serves them with `X-Robots-Tag: noindex` automatically.
+
+`components/Footer.js` also references `https://github.com/felipe-sq`, but that
+one is a genuine GitHub profile link in the social row and was left alone.
+
+## 6. PWA manifest and Windows tile config
+
+Both files under `public/static/favicons/` referenced their sibling images by
+paths that do not exist. The favicons were generated for a site that served them
+from the web root, but this repo keeps them in `/static/favicons/`, so every
+`src` in the two config files 404'd:
+
+| File                | Field                 | Was                           | Now                                           |
+| ------------------- | --------------------- | ----------------------------- | --------------------------------------------- |
+| `site.webmanifest`  | `icons[0].src`        | `/android-chrome-192x192.png` | `/static/favicons/android-chrome-192x192.png` |
+| `site.webmanifest`  | `icons[1].src`        | `/android-chrome-512x512.png` | `/static/favicons/android-chrome-512x512.png` |
+| `browserconfig.xml` | `<square150x150logo>` | `/mstile-150x150.png`         | `/static/favicons/mstile-150x150.png`         |
+
+`site.webmanifest` also shipped with `name` and `short_name` as **empty
+strings**, which is what an installed PWA or an Android "Add to Home screen"
+shortcut would have been labelled with. They now carry the site title and a
+short form, matching `next-seo.config.js`:
+
+```json
+"name": "Felipe Slaughter-Quintero",
+"short_name": "Felipe SQ",
+"start_url": "/",
+```
+
+`start_url` was absent. Browsers fall back to the URL of the document that
+linked the manifest, which happens to work here but is left to the user agent;
+declaring `/` makes the install target explicit.
+
+Only paths and names changed — `theme_color`, `background_color`, `display`,
+and the tile colour are untouched, and no icon files were added, removed, or
+regenerated.
+
+## Verification
+
+```bash
+npm run lint    # 0 errors, 1 warning (the known next/image advisory)
+npm run build   # prebuild ran; ✓ compiled; all 4 routes prerendered
+npm start       # / → 200, /projects → 200, /nope → 404
+```
+
+Confirmed against the production server:
+
+- The Inter stylesheet `<link>` is present in `/`, `/projects`, and `/404`.
+- `/sitemap.xml` serves `200 application/xml` with `<loc>` values
+  `https://www.felipesq.dev/` and `https://www.felipesq.dev/projects`, and no
+  `/404` entry.
+- The 404 "Return Home" button renders as exactly one `<a>`.
+- `canonical` and `og:url` are `https://www.felipesq.dev` on `/` and
+  `https://www.felipesq.dev/projects` on `/projects`.
+- `og:image` returns `200 image/png`.
+- `/robots.txt` points `Sitemap:` at the real domain.
+- `analyticsDomains` resolves to `["www.felipesq.dev", "felipesq.dev"]`, and to
+  a single entry when `NEXT_PUBLIC_SITE_URL` overrides it.
+- Every asset referenced by `site.webmanifest` and `browserconfig.xml` returns
+  `200 image/png`; the two config files themselves serve as
+  `application/manifest+json` and `application/xml`. The pre-fix paths (e.g.
+  `/android-chrome-192x192.png`) confirm as `404`.
+
+## Remaining open items
+
+1. **The `og:image` is the PWA icon, not a social card.** Valid but square and
+   grayscale; a 1200×630 asset should replace it.
+2. **`components/Nav.js` emits `<button>` inside `<a>`.** Same class of issue
+   as fix #3; the `as={NextLink}` pattern applies.
+3. **`pages/_document.js` uses raw `<html>`/`<body>`** rather than `<Html>` and
+   `<Body>` from `next/document`. It builds and renders correctly today, but the
+   documented API is the imported components.
+4. **`components/Footer.js` has a dead `gitFollow` iframe string** whose only
+   consumer is commented out on line 52.
+5. **`components/ProjectCard.js:43`** — the `next/image` advisory, unchanged.

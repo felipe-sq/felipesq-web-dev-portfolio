@@ -5,18 +5,23 @@
   "author": {
     "name": "Felipe Slaughter-Quintero",
     "email": "fslauq@gmail.com",
-    "url": "https://joshjacobsonmusic.com"
+    "url": "https://www.felipesq.dev"
   },
+  "homepage": "https://www.felipesq.dev",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fslauq/"
+    "url": "git+https://github.com/felipe-sq/felipesq-web-dev-portfolio.git"
+  },
+  "bugs": {
+    "url": "https://github.com/felipe-sq/felipesq-web-dev-portfolio/issues"
   },
   "engines": {
     "node": ">=20.9.0"
   },
   "packageManager": "npm@11.11.1",
   "scripts": {
+    "prebuild": "node scripts/generate-sitemap.js",
     "build": "next build",
     "dev": "next dev",
     "lint": "eslint .",
@@ -38,7 +43,6 @@
     "fathom-client": "^3.7.2",
     "framer-motion": "^12.43.0",
     "next": "^16.3.0",
-    "next-google-fonts": "^2.2.0",
     "next-seo": "^6.8.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

@@ -3,6 +3,11 @@ const path = require('path');
 
 const prettier = require('prettier');
 
+const { siteUrl } = require('../site.config');
+
+// Pages that must never appear in a sitemap.
+const EXCLUDED_ROUTES = new Set(['/404', '/500']);
+
 // Collect page routes the same way the previous globby pattern did:
 // 'pages/**/*{.js,.mdx}', excluding 'pages/_*.js' and 'pages/api'.
 const collectPages = (dir) => {
@@ -23,20 +28,34 @@ const collectPages = (dir) => {
   });
 };
 
+// 'pages/index.js' -> '/', 'pages/projects.js' -> '/projects',
+// 'pages/blog/index.js' -> '/blog'.
+const toRoute = (pagePath) => {
+  const route = `/${path
+    .relative('pages', pagePath)
+    .split(path.sep)
+    .join('/')
+    .replace(/\.(js|mdx)$/u, '')
+    .replace(/(^|\/)index$/u, '')}`;
+
+  return route === '/' ? route : route.replace(/\/$/u, '');
+};
+
 (async () => {
   const prettierConfig = await prettier.resolveConfig('./.prettierrc.js');
-  const pages = collectPages('pages');
-  // NOTE: <loc> is hard-coded to the same URL for every page. This mirrors the
-  // existing behaviour and is almost certainly unfinished - the per-page route
-  // is computed by Next from the file path but never used here.
+  const routes = collectPages('pages')
+    .map(toRoute)
+    .filter((route) => !EXCLUDED_ROUTES.has(route))
+    .sort();
+
   const sitemap = `
         <?xml version="1.0" encoding="UTF-8"?>
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-            ${pages
+            ${routes
               .map(
-                () => `
+                (route) => `
                         <url>
-                            <loc>${`https://github.com/felipe-sq`}</loc>
+                            <loc>${`${siteUrl}${route}`}</loc>
                         </url>
                     `
               )
