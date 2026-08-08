@@ -1,4 +1,5 @@
 import React from "react";
+import NextLink from "next/link";
 import {
   Flex,
   HStack,
@@ -9,16 +10,18 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 
-// The card body is deliberately not a link. A card can expose a live demo, a
-// source repo, or both, and an anchor cannot contain another anchor, so the
-// links live in a footer row instead of wrapping the whole card.
+// The card body is deliberately not a link. A card can expose a case study, a
+// live demo, a source repo, or any combination, and an anchor cannot contain
+// another anchor, so the links live in a footer row instead of wrapping the
+// whole card.
 //
-// Both links are optional: a desktop app has no URL to demo, and a deployed
-// project may have no public repo. A card with neither renders no footer at
-// all rather than an empty row.
+// All three are optional: a desktop app has no URL to demo, a deployed project
+// may have no public repo, and only some projects have a written case study. A
+// card with none of them renders no footer at all rather than an empty row.
 const ProjectCard = ({
   title,
   description,
+  caseStudyHref,
   href,
   repoHref,
   initials,
@@ -81,11 +84,23 @@ const ProjectCard = ({
             <Text lineHeight="1.3">{description}</Text>
           </Stack>
         </Flex>
-        {/* Every card repeats "Live demo" / "Code", so each link carries an
-            aria-label naming the project. The label starts with the visible
-            text so voice control still matches what is on screen. */}
-        {(href || repoHref) && (
+        {/* Every card repeats "Case study" / "Live demo" / "Code", so each
+            link carries an aria-label naming the project. The label starts
+            with the visible text so voice control still matches what is on
+            screen. */}
+        {(caseStudyHref || href || repoHref) && (
           <HStack spacing={6} mt={4} pl={{ base: 0, sm: "64px" }}>
+            {caseStudyHref && (
+              <Link
+                as={NextLink}
+                href={caseStudyHref}
+                aria-label={`Case study for ${title}`}
+                color={linkColor[colorMode]}
+                fontWeight="medium"
+              >
+                Case study
+              </Link>
+            )}
             {href && (
               <Link
                 href={href}

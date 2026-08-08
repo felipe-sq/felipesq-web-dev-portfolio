@@ -1,6 +1,7 @@
 import React from "react";
 import {
   useColorMode,
+  Grid,
   Heading,
   Link,
   Text,
@@ -8,8 +9,24 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import Container from "../components/Container";
-import ProjectCard from "../components/ProjectCard";
-import projects from "../data/projects";
+import ProjectList from "../components/ProjectList";
+import PersonJsonLd from "../components/PersonJsonLd";
+
+// The stack as discrete terms rather than sentences. The About copy above it
+// explains what the work was; this is the version a recruiter scans in three
+// seconds and a keyword filter can actually match. Grouped and set as plain
+// text on purpose — badges would fight the typography everywhere else.
+//
+// Mirrored by `knowsAbout` in components/PersonJsonLd.js.
+const stack = [
+  { label: "Languages", items: ["JavaScript", "TypeScript"] },
+  { label: "Frameworks", items: ["React", "Next.js", "Node.js"] },
+  { label: "Data & APIs", items: ["GraphQL", "REST", "Azure", "Cosmos DB"] },
+  { label: "Interface", items: ["Material UI", "Accessibility (WCAG)"] },
+  { label: "AI", items: ["LLM API integration"] },
+  { label: "Commerce", items: ["Shopify"] },
+  { label: "Tooling", items: ["Git"] },
+];
 
 const Index = () => {
   const { colorMode } = useColorMode();
@@ -26,6 +43,7 @@ const Index = () => {
 
   return (
     <Container>
+      <PersonJsonLd />
       <Stack
         as="main"
         spacing={8}
@@ -108,19 +126,44 @@ const Index = () => {
           maxWidth="700px"
         >
           <Heading letterSpacing="tight" mb={4} size="xl" fontWeight={700}>
+            Stack
+          </Heading>
+          {/* A description list, so the grouping is structure rather than
+              layout: each label is the term its technologies belong to. */}
+          <Grid
+            as="dl"
+            width="100%"
+            templateColumns={{ base: "1fr", sm: "10rem 1fr" }}
+            columnGap={6}
+            rowGap={{ base: 3, sm: 2 }}
+            m={0}
+          >
+            {stack.map(({ label, items }) => (
+              <React.Fragment key={label}>
+                <Text
+                  as="dt"
+                  color={secondaryTextColor[colorMode]}
+                  fontWeight="medium"
+                >
+                  {label}
+                </Text>
+                <Text as="dd" m={0}>
+                  {items.join(", ")}
+                </Text>
+              </React.Fragment>
+            ))}
+          </Grid>
+        </Flex>
+        <Flex
+          flexDirection="column"
+          justifyContent="flex-start"
+          alignItems="flex-start"
+          maxWidth="700px"
+        >
+          <Heading letterSpacing="tight" mb={4} size="xl" fontWeight={700}>
             Recent Projects
           </Heading>
-          {projects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              title={project.title}
-              description={project.description}
-              href={project.href}
-              repoHref={project.repoHref}
-              initials={project.initials}
-              accent={project.accent}
-            />
-          ))}
+          <ProjectList />
         </Flex>
       </Stack>
     </Container>

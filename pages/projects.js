@@ -1,9 +1,8 @@
 import React from "react";
 import { NextSeo } from "next-seo";
 import { useColorMode, Heading, Text, Flex, Stack } from "@chakra-ui/react";
-import ProjectCard from "../components/ProjectCard";
+import ProjectList from "../components/ProjectList";
 import Container from "../components/Container";
-import projects from "../data/projects";
 import siteConfig from "../site.config";
 
 const url = `${siteConfig.siteUrl}/projects`;
@@ -106,17 +105,7 @@ const Projects = () => {
             <Heading letterSpacing="tight" mb={4} size="xl" fontWeight={700}>
               The projects
             </Heading>
-            {projects.map((project) => (
-              <ProjectCard
-                key={project.id}
-                title={project.title}
-                description={project.description}
-                href={project.href}
-                repoHref={project.repoHref}
-                initials={project.initials}
-                accent={project.accent}
-              />
-            ))}
+            <ProjectList />
           </Flex>
         </Stack>
       </Container>
