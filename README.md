@@ -100,3 +100,20 @@ npm audit
 
 A few packages are intentionally pinned below their latest major. See
 [MIGRATION_SUMMARY.md](./MIGRATION_SUMMARY.md) for the reasoning.
+
+## License and credits
+
+MIT — see [LICENSE](./LICENSE).
+
+The license carries two copyright lines because this site began as a fork of
+[Josh Jacobson's portfolio](https://github.com/josh-jacobson/portfolio), which
+was itself MIT licensed. Parts of his code are still here — `styles/prism.js`
+most plainly — and MIT asks that the notice travel with them. His README in turn
+credits Lee Robinson for the original design and application structure.
+
+Two things in the repo are **not** covered by that MIT grant:
+
+- **Inter** (`styles/fonts/`) is licensed under the SIL Open Font License 1.1.
+  Its terms are in [styles/fonts/LICENSE.txt](./styles/fonts/LICENSE.txt).
+- **Site content** — the writing, project descriptions and images — is not
+  offered under the MIT grant. Reuse the code, not the persona.
