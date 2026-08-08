@@ -18,8 +18,11 @@ const Container = ({ children }) => {
   return (
     <>
       <Nav />
+      {/* Deliberately not <main>. Each page supplies its own <main> around the
+          page content, and a <main> inside a <main> is invalid — as is putting
+          the site <footer> inside <main> at all. This is the layout wrapper;
+          the landmarks belong to Nav, the page, and Footer. */}
       <Flex
-        as="main"
         justifyContent="center"
         flexDirection="column"
         bg={bgColor[colorMode]}
