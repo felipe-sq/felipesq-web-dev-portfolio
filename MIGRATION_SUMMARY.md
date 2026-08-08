@@ -1,6 +1,6 @@
 # Migration Summary
 
-This document covers five phases of modernization work:
+This document covers six phases of modernization work:
 
 - **Phase 1** — React 18 + Next.js 16 + Chakra UI v2 + Emotion v11 migration.
 - **Phase 2** — npm standardization, dead-dependency removal, and reaching
@@ -16,6 +16,9 @@ This document covers five phases of modernization work:
   icons nobody had logged. See [Phase 4](#phase-4-open-items-cleanup).
 - **Phase 5** — self-hosted Inter via `next/font`, and rendered the `og:image`
   card in it. See [Phase 5](#phase-5-self-hosted-inter-and-the-og-card-in-it).
+- **Phase 6** — deleted the superseded static site and brought the repo to full
+  Prettier conformance, closing the last open item. See
+  [Phase 6](#phase-6-retire-the-legacy-static-site-close-the-prettier-item).
 
 ---
 
@@ -723,7 +726,8 @@ Confirmed in the prerendered output of `/`, `/projects`, and `/404`:
    and unrelated to the Next.js app.
 
 Items 1 and 2 of this list (the `og:image` font and `next/font`) were closed
-together in Phase 5.
+together in Phase 5; item 1 above was closed in Phase 6, where the claim that
+`styles/styles.scss` is "unrelated to the Next.js app" turned out to be wrong.
 
 ---
 
@@ -813,3 +817,66 @@ npm start       # / 200, /projects 200, /nope 404, /sitemap.xml 200,
 `fonts.heading` is still Chakra's system stack — headings were never Inter,
 before this change or after it. Pointing it at Inter would be a visual redesign,
 not a migration fix, so it was left alone and is noted here instead.
+
+---
+
+# Phase 6: retire the legacy static site, close the Prettier item
+
+The last open item described one problem but contained two, and the description
+of the second was wrong.
+
+## 1. `styles/styles.scss` is live app code
+
+The item filed both offenders as "the legacy static site … unrelated to the
+Next.js app". That holds for `index.html`. It does not hold for
+`styles/styles.scss`, which `pages/_app.js` imports on line 16 — it styles the
+running app, and `.project-card` in `components/ProjectCard.js` depends on it.
+
+It was never non-conformant on purpose, only unreachable: the `npm run prettier`
+glob covered `js,mjs,json,md,mdx,yml` and no stylesheet extension. The glob (and
+the matching `lint-staged` pattern) now includes `scss,css`, and the file
+reformatted to a three-line diff — `height:60px` → `height: 60px`,
+`#1E4E8C` → `#1e4e8c`, and a missing trailing newline. No rule changed.
+
+## 2. The static site was deleted, not formatted
+
+`index.html` is the **Miniport by HTML5 UP** template this portfolio started
+from, with `assets/` and `images/` behind it. Next.js does not serve a root
+`index.html` — only `public/` — and nothing in `pages/`, `components/`,
+`styles/`, `data/` or `scripts/` referenced any of it. It was 42 tracked files
+and 3.0 MB of unreachable code, so formatting it would have churned markup no
+one reads.
+
+Removed: `index.html`, `assets/`, `images/`, `README.txt`, and the root
+`LICENSE.txt`. Everything remains in git history.
+
+`assets` and `images` came out of `.prettierignore` in the same pass; with the
+directories gone the entries only described files that no longer exist.
+
+**On the deleted `LICENSE.txt`:** it was the Creative Commons Attribution 3.0
+text covering the Miniport template, not this repo's own terms — `package.json`
+has declared `"license": "MIT"` throughout. Removing the template resolves that
+mismatch, but the repo now ships **no `LICENSE` file at all** while still
+declaring MIT. Adding one is worth doing and is not done here.
+
+## Verification
+
+```bash
+npx prettier --check .   # All matched files use Prettier code style!
+npm run lint             # 0 errors, 0 warnings
+npm run build            # ✓ compiled; all 4 routes
+npm start                # / 200, /projects 200, /nope 404, /api/og 200
+```
+
+## Remaining open items
+
+None.
+
+Two things noticed while closing this out, neither acted on:
+
+1. **`.nav-logo` and `.header-image` in `styles/styles.scss` are dead.** Zero
+   references in `pages/`, `components/`, or the deleted static site — fork-origin
+   leftovers of the same kind Phase 4 removed. `.project-card`, the third rule,
+   is live. Left in place because dead-code removal is not what the Prettier item
+   asked for.
+2. **No `LICENSE` file**, per §2 above.

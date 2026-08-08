@@ -26,12 +26,12 @@
     "dev": "next dev",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prettier": "prettier --write \"**/*.{js,mjs,json,md,mdx,yml}\"",
+    "prettier": "prettier --write \"**/*.{js,mjs,json,md,mdx,yml,scss,css}\"",
     "start": "next start",
     "test": "npm run lint"
   },
   "lint-staged": {
-    "*.{js,mjs,json,md,mdx,yml}": [
+    "*.{js,mjs,json,md,mdx,yml,scss,css}": [
       "prettier --write"
     ]
   },

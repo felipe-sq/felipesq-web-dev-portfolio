@@ -74,17 +74,20 @@ npm run dev
 components/          Shared layout + UI (Container, Nav, Footer, ProjectCard, Track)
 pages/               Routes: index.js, projects.js, 404.js, _app.js, _document.js
 pages/_app.js        Chakra provider, color mode, global styles, SEO, Fathom analytics
-pages/_document.js   <head> tags, favicons, fonts
+pages/_document.js   <head> tags, favicons
+pages/api/og.js      Generates the og:image card at request time
 styles/              theme.js (Chakra theme), prism.js, styles.scss
+styles/fonts.js      Self-hosted Inter (next/font); files in styles/fonts/
 next-seo.config.js   Default SEO metadata
 next.config.js       Next.js/Turbopack config
 scripts/             generate-sitemap.js
 eslint.config.mjs    ESLint flat config (extends eslint-config-next)
 ```
 
-The repo also contains an older static HTML portfolio (`index.html`, `assets/`,
-`images/`) kept alongside the Next.js app. Those directories are excluded from
-linting and formatting.
+Everything in the repo is part of the Next.js app. The older static portfolio
+that used to sit alongside it (`index.html`, `assets/`, `images/` — the Miniport
+template this site started from) was removed once it had been fully superseded;
+it is still in the git history if it is ever needed.
 
 ## Dependency maintenance
 
