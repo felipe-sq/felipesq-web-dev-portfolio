@@ -12,13 +12,14 @@
 // with pages/api/og.js and safari-pinned-tab.svg.
 const projects = [
   {
-    id: "chuck-norris-jokes",
-    title: "Chuck Norris Joke Generator",
+    id: "interview-drill",
+    title: "Interview Drill",
     description:
-      "A React app that serves up an endless supply of Chuck Norris jokes on demand.",
-    href: "https://chuck-norris-jokes-chi.vercel.app",
-    initials: "CN",
-    accent: "#c05621",
+      "A spaced-repetition trainer for frontend interview questions. Answer out loud, rate your recall, and the FSRS algorithm brings each question back on the day you are about to forget it. Next.js and TypeScript, with review history kept in the browser — no account and no backend.",
+    href: "https://interview-drill-demo.vercel.app",
+    repoHref: "https://github.com/felipe-sq/interview-drill",
+    initials: "ID",
+    accent: "#b83280",
   },
   {
     id: "water-my-plants",
