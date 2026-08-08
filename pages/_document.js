@@ -21,16 +21,9 @@ class MyDocument extends Document {
           />
           <link href="/static/favicons/favicon.ico" rel="shortcut icon" />
           <link href="/static/favicons/site.webmanifest" rel="manifest" />
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link
-            rel="preconnect"
-            href="https://fonts.gstatic.com/"
-            crossOrigin=""
-          />
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-          />
+          {/* Inter is self-hosted by next/font — see styles/fonts.js. The
+              fonts.googleapis.com stylesheet and the two preconnects it needed
+              used to sit here. */}
           <link
             rel="preconnect"
             href="https://cdn.usefathom.com"

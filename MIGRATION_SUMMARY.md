@@ -1,6 +1,6 @@
 # Migration Summary
 
-This document covers three phases of modernization work:
+This document covers five phases of modernization work:
 
 - **Phase 1** — React 18 + Next.js 16 + Chakra UI v2 + Emotion v11 migration.
 - **Phase 2** — npm standardization, dead-dependency removal, and reaching
@@ -12,6 +12,10 @@ This document covers three phases of modernization work:
   the PWA manifest — uncovering three further latent bugs along the way. See
   [Phase 3](#phase-3-pre-existing-bug-fixes), which supersedes Phase 2's
   "Known issues".
+- **Phase 4** — cleared Phase 3's open items, which surfaced the empty footer
+  icons nobody had logged. See [Phase 4](#phase-4-open-items-cleanup).
+- **Phase 5** — self-hosted Inter via `next/font`, and rendered the `og:image`
+  card in it. See [Phase 5](#phase-5-self-hosted-inter-and-the-og-card-in-it).
 
 ---
 
@@ -545,10 +549,12 @@ The route is excluded from the sitemap for free — `collectPages()` already ski
 `pages/api` (verified: `sitemap.xml` still lists only `/` and `/projects`).
 
 **Known limitation:** the card renders in the default font at a single weight.
-`@vercel/og` bundles one Noto Sans face, so the `fontWeight: 700` on the
-headline has no effect and the card is not in Inter like the rest of the site.
-Fixing it means committing an Inter `.ttf` and passing it via the `fonts`
-option.
+`@vercel/og` bundles one face, so the `fontWeight: 700` on the headline has no
+effect and the card is not in Inter like the rest of the site. Fixing it means
+committing an Inter `.ttf` and passing it via the `fonts` option.
+
+> Closed in Phase 5 §2. The bundled face is `Geist-Regular.ttf`, not Noto Sans —
+> the name here was wrong, the behavior described was not.
 
 ## Verification
 
@@ -712,17 +718,98 @@ Confirmed in the prerendered output of `/`, `/projects`, and `/404`:
 
 ## Remaining open items
 
-1. **The `og:image` card is not in Inter.** The only item carried over from
-   Phase 3. `@vercel/og` bundles a single Noto Sans face, so the `fontWeight: 700`
-   on the headline has no effect. See the limitation in
-   [section 7](#7-generated-ogimage-card). Deliberately deferred: the card
-   renders correctly, and committing a font file introduces a failure mode the
-   current version does not have.
-2. **`next/font` is still not used.** Inter loads via a render-blocking
-   stylesheet `<link>` (Phase 3 §1). Moving to `next/font` would self-host the
-   face and drop the request, but with the Pages Router it means threading a
-   generated CSS variable through the Chakra theme's `fonts.body` — a refactor,
-   not a bug fix. Would also supply the font file item 1 needs.
-3. **Prettier non-conformance in the legacy static site** — the root
+1. **Prettier non-conformance in the legacy static site** — the root
    `index.html` and `styles/styles.scss`. Outside the `npm run prettier` globs
    and unrelated to the Next.js app.
+
+Items 1 and 2 of this list (the `og:image` font and `next/font`) were closed
+together in Phase 5.
+
+---
+
+# Phase 5: self-hosted Inter, and the og card in it
+
+The two font items were one problem wearing two hats, so they were done as a
+single change. The measurement below is what decided its shape.
+
+## 1. `next/font/local` replaces the Google Fonts `<link>`
+
+Inter now ships from the origin. `styles/fonts.js` is the font definitions file
+the Next docs prescribe for a font used in more than one place; `styles/theme.js`
+imports it and feeds `inter.style.fontFamily` into Chakra's `fonts.body`.
+
+Threading a CSS variable turned out to be unnecessary — the earlier note assumed
+it. `inter.style.fontFamily` is the hashed family name plus the generated
+metric-adjusted fallback, so putting it straight into the theme token means no
+wrapper element has to carry a `className` and no `--font-inter` has to be
+declared. The rendered token is now:
+
+```
+--chakra-fonts-body: 'inter','inter Fallback',-apple-system,…
+```
+
+`'inter Fallback'` is generated with `size-adjust: 107.89%` against Arial, which
+is layout-shift protection the `<link>` version never had.
+
+The three `<link>` tags in `pages/_document.js` (stylesheet + two preconnects)
+are gone. `/`, `/projects` and `/404` now make **zero** requests to
+`fonts.googleapis.com` or `fonts.gstatic.com`, and each emits a
+`rel="preload" as="font"` for the self-hosted file.
+
+## 2. The og card renders in Inter, with a real bold
+
+`pages/api/og.js` loads two static faces and passes them via the `fonts` option;
+the root element sets `fontFamily: "Inter"`. The headline is genuinely bold now
+rather than 700-with-no-effect.
+
+Satori does not instance variable axes — it selects a face per weight — so bold
+has to be its own file. Fonts are read once per warm instance, not once per
+scrape.
+
+## 3. Why the two consumers do not share a file
+
+Satori parses `ttf`/`otf`/`woff` and **not** `woff2` (verified against the
+bundled `index.node.js`: `wOFF` appears, `wOF2` does not). Sharing one file
+therefore meant demoting the browser to `woff`. Measured, for Inter v20 latin:
+
+| Candidate                 | Size                       | Usable by |
+| ------------------------- | -------------------------- | --------- |
+| variable `woff2`          | **47 KB**, weights 100–900 | web only  |
+| static `woff` 400/600/700 | 144–148 KB each (~440 KB)  | web + og  |
+| static `ttf` 400/700      | 65 KB each                 | og only   |
+
+Sharing would have cost the browser ~9× the payload to save two server-side
+files that never reach a browser. So each consumer gets the format it can
+actually use: 47 KB over the wire, 130 KB of `ttf` inside the function bundle.
+
+`styles/fonts/` carries all three files, the SIL OFL license Inter requires when
+redistributed, and a README recording provenance.
+
+## 4. `outputFileTracingIncludes`
+
+The `ttf` files are read, not imported, so `next.config.js` pins them to the
+`/api/og` trace. Tracing does infer them today — verified in
+`og.js.nft.json` — but only while `FONT_DIR` stays statically analyzable, and a
+miss there is a 500 in production and nothing at all locally.
+
+## Verification
+
+```bash
+npm run lint    # 0 errors, 0 warnings
+npm run build   # ✓ compiled; all 4 routes; /api/og still ƒ (dynamic)
+npm start       # / 200, /projects 200, /nope 404, /sitemap.xml 200,
+                # /robots.txt 200, /api/og 200 image/png
+```
+
+- `/_next/static/media/inter_latin_variable-*.woff2` serves `200 font/woff2`,
+  48,256 bytes.
+- Both `@font-face` rules are emitted: `inter` at `font-weight: 100 900`, and
+  `inter Fallback` with the `size-adjust` metrics.
+- `og.js.nft.json` lists `inter-regular.ttf` and `inter-bold.ttf`.
+- `/api/og` decodes as `PNG image data, 1200 x 630`, in Inter, headline bold.
+
+## Not changed
+
+`fonts.heading` is still Chakra's system stack — headings were never Inter,
+before this change or after it. Pointing it at Inter would be a visual redesign,
+not a migration fix, so it was left alone and is noted here instead.

@@ -1,7 +1,33 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+
 import { ImageResponse } from "next/og";
 
 import SEO from "../../next-seo.config";
 import siteConfig from "../../site.config";
+
+// Satori, which renders this card, reads ttf/otf/woff and not woff2 — so the
+// card cannot reuse the variable woff2 that styles/fonts.js ships to browsers.
+// These are the same typeface in a format it can parse. Two static faces rather
+// than one variable file because Satori picks a face per weight; it does not
+// instance a variable axis, which is why `fontWeight: 700` below did nothing
+// while the bundled default face was the only one loaded.
+const FONT_DIR = path.join(process.cwd(), "styles", "fonts");
+
+// Read once per warm instance, not once per scrape.
+let fontsPromise;
+
+const loadFonts = () => {
+  fontsPromise ??= Promise.all([
+    readFile(path.join(FONT_DIR, "inter-regular.ttf")),
+    readFile(path.join(FONT_DIR, "inter-bold.ttf")),
+  ]).then(([regular, bold]) => [
+    { name: "Inter", data: regular, weight: 400, style: "normal" },
+    { name: "Inter", data: bold, weight: 700, style: "normal" },
+  ]);
+
+  return fontsPromise;
+};
 
 // 1200x630 is the aspect ratio every major platform crops toward. Content stays
 // clear of the edges because Slack, LinkedIn and X each crop differently.
@@ -31,6 +57,7 @@ const handler = async (_req, res) => {
         justifyContent: "center",
         padding: "0 100px",
         background: BACKGROUND,
+        fontFamily: "Inter",
       }}
     >
       <div
@@ -57,7 +84,7 @@ const handler = async (_req, res) => {
         {siteConfig.siteHost}
       </div>
     </div>,
-    SIZE,
+    { ...SIZE, fonts: await loadFonts() },
   );
 
   res.setHeader("Content-Type", "image/png");

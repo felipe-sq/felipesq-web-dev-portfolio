@@ -3,4 +3,12 @@
 // bundler hook - the build uses Turbopack, which never calls webpack().
 module.exports = {
   turbopack: {},
+  // pages/api/og.js reads these at request time rather than importing them.
+  // Tracing does infer them today from the readFile call, but only while the
+  // path stays statically analyzable; pinning them here is what keeps a
+  // refactor of FONT_DIR from shipping a function that 500s on a missing file.
+  // The woff2 is not listed - next/font imports it, so it traces itself.
+  outputFileTracingIncludes: {
+    "/api/og": ["./styles/fonts/*.ttf"],
+  },
 };
