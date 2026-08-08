@@ -579,13 +579,72 @@ Confirmed against the production server:
 
 ## Remaining open items
 
-1. **The `og:image` card is not in Inter.** See the limitation in
+Nothing below has been fixed. Grouped by priority, with enough detail to pick up
+cold in a later session.
+
+### Content — visible on the live site
+
+1. **Project cards use the fork origin's album art as thumbnails.** This repo is
+   a fork of a musician's personal site, and the images under `public/` are that
+   musician's record covers, not screenshots of the projects they label:
+
+   | Card                        | Page              | Image                  | What the image actually is          |
+   | --------------------------- | ----------------- | ---------------------- | ----------------------------------- |
+   | Chuck Norris Joke Generator | `index.js:78`     | `/time_lost_200.jpg`   | album cover                         |
+   | Water My Plants             | `index.js:84`     | `/oceans_200.jpg`      | album cover reading "Josh Jacobson" |
+   | Secret Recipes              | `index.js:90`     | `/juniper_200.jpg`     | "Treman / Juniper Drive" cover      |
+   | The Honey-Do List!          | `index.js:96`     | `/tys_list_200.jpg`    | album cover                         |
+   | Chuck Norris Joke Generator | `projects.js:103` | `/juniper_200.jpg`     | "Treman / Juniper Drive" cover      |
+   | Water My Plants             | `projects.js:109` | `/beginnings_200.jpeg` | album cover                         |
+   | Secret Recipes              | `projects.js:115` | `/oceans_200.jpg`      | album cover reading "Josh Jacobson" |
+
+   Two things to note. `oceans_200.jpg` has **another person's name printed on
+   it** and is currently presented as this portfolio's work, which is worth
+   treating as more than a cosmetic issue. And the same three projects appear on
+   both pages with _different_ covers each time, which confirms the images were
+   never meant to correspond to anything. Fixing this needs real screenshots;
+   once they exist the five `*_200.*` files in `public/` can be deleted.
+
+2. **`components/Nav.js` emits `<button>` inside `<a>`** — interactive content
+   nested in an anchor, which is invalid HTML, on every page of the site. Same
+   class of issue as fix #3 above and the same remedy: `as={NextLink}`.
+
+### Dead code inherited from the fork
+
+3. **`components/Track.js` is never imported.** A Spotify "top tracks" ranking
+   widget from the origin site. 57 lines, no consumers.
+4. **`styles/theme.js` defines a `jj_circle_logo` icon** that nothing
+   references. The `jj` prefix is the origin owner's initials.
+5. **`components/Footer.js` has a dead `gitFollow` iframe string** whose only
+   consumer is commented out on line 52.
+6. **Unused imports.** `eslint-config-next` does not enable `no-unused-vars`, so
+   none of these are reported:
+   - `pages/projects.js` — `useState`, `useEffect`, `Input`, `InputGroup`,
+     `InputRightElement`, `Icon` (leftovers from a removed search box)
+   - `components/Container.js` — `NextLink`, `Button`, `Box`, `IconButton`
+   - `components/ProjectCard.js` — `Box`, `Icon`
+
+   Adding `"no-unused-vars": "warn"` to `eslint.config.mjs` would surface these
+   and prevent recurrence. Note the bare `import React` in most files is _not_
+   in this list — it is redundant under the modern JSX transform but harmless.
+
+### Cosmetic and advisory
+
+7. **The `og:image` card is not in Inter.** See the limitation in
    [section 7](#7-generated-ogimage-card) — it needs a committed font file.
-2. **`components/Nav.js` emits `<button>` inside `<a>`.** Same class of issue
-   as fix #3; the `as={NextLink}` pattern applies.
-3. **`pages/_document.js` uses raw `<html>`/`<body>`** rather than `<Html>` and
+   Deliberately deferred: the card renders correctly, and adding a font file
+   introduces a failure mode the current version does not have.
+8. **`pages/_document.js` uses raw `<html>`/`<body>`** rather than `<Html>` and
    `<Body>` from `next/document`. It builds and renders correctly today, but the
    documented API is the imported components.
-4. **`components/Footer.js` has a dead `gitFollow` iframe string** whose only
-   consumer is commented out on line 52.
-5. **`components/ProjectCard.js:43`** — the `next/image` advisory, unchanged.
+9. **`components/ProjectCard.js:43`** — the `next/image` advisory, unchanged.
+   This is the one warning `npm run lint` still reports.
+10. **`scripts/generate-sitemap.js:45` resolves `./.prettierrc.js`**, which does
+    not exist — the repo has only `.prettierignore`. `resolveConfig` returns
+    `null`, and `{...null}` is `{}`, so the script works and the output is
+    formatted with Prettier's defaults. Misleading rather than broken.
+11. **Pre-existing Prettier non-conformance** in `pages/_document.js`,
+    `scripts/generate-sitemap.js`, `README (portfolio).md`,
+    `.vscode/settings.json`, and `.claude/settings.local.json` (single quotes vs.
+    the double-quote default). Left alone to keep diffs scoped to real changes;
+    `npm run prettier` would fix all five in one pass.
