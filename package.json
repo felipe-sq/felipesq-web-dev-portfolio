@@ -12,66 +12,42 @@
     "type": "git",
     "url": "https://github.com/fslauq/"
   },
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "packageManager": "npm@11.11.1",
   "scripts": {
     "build": "next build",
-    "dev": "next",
-    "lint": "eslint . --ext .json --ext .js",
-    "prettier": "prettier --write \"**/*.{html,js,json,md,mdx,yml}\"",
+    "dev": "next dev",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prettier": "prettier --write \"**/*.{js,mjs,json,md,mdx,yml}\"",
     "start": "next start",
-    "test": "yarn lint",
-    "postinstall": "patch-package"
+    "test": "npm run lint"
   },
   "lint-staged": {
-    "*.{html,js,json,md,mdx,yml}": [
-      "prettier --write",
-      "git add"
+    "*.{js,mjs,json,md,mdx,yml}": [
+      "prettier --write"
     ]
   },
   "dependencies": {
-    "@chakra-ui/icons": "^2.0.0",
-    "@chakra-ui/react": "^2.6.2",
-    "@emotion/react": "^11.11.0",
-    "@emotion/styled": "^11.11.0",
-    "framer-motion": "^7.0.0",
-    "@mapbox/rehype-prism": "^0.9.0",
-    "@mdx-js/loader": "^3.1.1",
-    "@mdx-js/react": "^3.0.0",
-    "@next/mdx": "^16.0.7",
-    "babel-plugin-import-glob-array": "0.2.0",
-    "big.js": "5.2.2",
-    "comma-number": "2.0.1",
-    "date-fns": "2.13.0",
-    "fathom-client": "3.0.0",
-    "firebase": "^12.6.0",
-    "firebase-admin": "^13.6.0",
-    "googleapis": "^167.0.0",
-    "iframe-resizer-react": "^1.0.4",
-    "mdx-prism": "0.3.1",
-    "next": "^16.0.7",
-    "next-google-fonts": "1.1.0",
-    "next-mdx-enhanced": "^2.5.0",
-    "next-seo": "4.5.0",
-    "patch-package": "8.0.1",
-    "postinstall-postinstall": "2.1.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-tweet-embed": "1.2.2",
-    "reading-time": "1.2.0",
-    "remark-autolink-headings": "6.0.0",
-    "remark-capitalize": "1.1.0",
-    "remark-code-titles": "0.1.1",
-    "remark-slug": "6.0.0",
-    "sass": "^1.26.10",
-    "start": "^5.1.0",
-    "swr": "0.2.0",
-    "unsplash-js": "^7.0.20"
+    "@chakra-ui/icons": "^2.2.4",
+    "@chakra-ui/react": "^2.10.10",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "fathom-client": "^3.7.2",
+    "framer-motion": "^12.43.0",
+    "next": "^16.3.0",
+    "next-google-fonts": "^2.2.0",
+    "next-seo": "^6.8.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sass": "^1.102.0"
   },
   "devDependencies": {
-    "eslint": "6.8.0",
-    "eslint-config-get-off-my-lawn": "5.0.1",
-    "globby": "11.0.0",
-    "lint-staged": "10.1.2",
-    "prettier": "2.0.5",
-    "rehype": "10.0.0"
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.3.0",
+    "lint-staged": "^17.3.0",
+    "prettier": "^3.9.6"
   }
 }

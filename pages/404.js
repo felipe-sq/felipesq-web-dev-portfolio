@@ -38,8 +38,8 @@ const Error = () => {
             451 – Unavailable For Legal Reasons
           </Heading>
           <Text color={secondaryTextColor[colorMode]} my={4}>
-            I'm guessing you spelled something wrong. Can you double check that
-            URL?
+            I&apos;m guessing you spelled something wrong. Can you double check
+            that URL?
           </Text>
           <NextLink href="/" passHref>
             <Button

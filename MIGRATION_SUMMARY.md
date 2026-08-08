@@ -1,4 +1,16 @@
-# Migration Summary: React 18 + Next.js 16 + Chakra UI v2 + Emotion v11
+# Migration Summary
+
+This document covers two phases of modernization work:
+
+- **Phase 1** — React 18 + Next.js 16 + Chakra UI v2 + Emotion v11 migration.
+- **Phase 2** — npm standardization, dead-dependency removal, and reaching
+  **0 known vulnerabilities**. See
+  [Phase 2](#phase-2-npm-standardization--dependency-cleanup) below, which
+  supersedes Phase 1's "Remaining Vulnerabilities" and install instructions.
+
+---
+
+# Phase 1: React 18 + Next.js 16 + Chakra UI v2 + Emotion v11
 
 ## Overview
 
@@ -137,117 +149,178 @@ experimental: { modern: true }
 import { Heading } from "@chakra-ui/react";
 ```
 
-## Remaining Vulnerabilities (26 total)
+## Phase 1 outcome
 
-### Unfixable Without Package Replacement
+All pages compiled and the production build succeeded, but the tree still
+carried **26 known vulnerabilities**, and `npm install` required
+`--legacy-peer-deps` because `next-seo@4.5.0` pinned `react@^16`. Both issues
+were resolved in Phase 2.
 
-1. **next-mdx-enhanced bundled deps** (Critical loader-utils, high prismjs)
+---
 
-   - Root cause: next-mdx-enhanced v2.5.0 bundles @mdx-js/loader v1.x with old loader-utils
-   - Fix would require: Replacing MDX processing (major rewrite of next.config.js)
-   - Impact: Critical prototype pollution + ReDoS in loader-utils, XSS/ReDoS in prismjs
+# Phase 2: npm standardization + dependency cleanup
 
-2. **mdx-prism dependencies** (High prismjs)
+## Overview
 
-   - Root cause: mdx-prism depends on old prismjs <=1.29.0 with multiple vulns
-   - Fix would require: Replacing mdx-prism with modern syntax highlighting
-   - Impact: High-severity XSS and ReDoS in old Prism version
+Standardized the repo on npm, removed dead dependencies, and modernized the
+tooling. Vulnerabilities went from **59 → 0** and the `--legacy-peer-deps`
+workaround is no longer needed.
 
-3. **remark-capitalize chain** (High cross-spawn)
-   - Root cause: remark-capitalize → title → clipboardy → execa → cross-spawn (old v5)
-   - Fix would require: Removing remark-capitalize plugin
-   - Impact: Medium-complexity to replace in MDX pipeline
+| Metric              | Before                            | After               |
+| ------------------- | --------------------------------- | ------------------- |
+| `npm audit`         | 59 (4 critical, 36 high)          | **0**               |
+| Install flags       | `--legacy-peer-deps` required     | none                |
+| Installed packages  | 700+                              | 425                 |
+| Direct dependencies | 38 + 6 dev                        | 12 + 4 dev          |
+| `npm run lint`      | crashed (no config found)         | passes (0 errors)   |
+| Lockfiles           | `package-lock.json` + `yarn.lock` | `package-lock.json` |
 
-### ESLint Dev Dependencies (Unfixable Without Major ESLint Upgrade)
+## Package manager standardization
 
-- **dot-prop** (High): Prototype pollution in eslint-config-get-off-my-lawn
-- **semver** (High): ReDoS in @typescript-eslint/typescript-estree
-- **tmp** (High): Arbitrary file write in eslint dependency chain
+- Removed `yarn.lock`. `package-lock.json` is now the only lockfile.
+- Added `"packageManager": "npm@11.11.1"` and `"engines": { "node": ">=20.9.0" }`.
+- `npm test` previously shelled out to `yarn lint`; it now runs `npm run lint`.
+- `npm ci` verified to install cleanly from the lockfile with no flags.
 
-These are dev-only and would require ESLint 9.x upgrade (breaking change).
+## Removed: dead MDX pipeline
 
-## Build Validation
+`next.config.js` wired up `next-mdx-enhanced` with `layoutPath: "layouts"`, but
+the repo contained **no `.mdx` files and no `layouts/` directory** — the entire
+pipeline was inert. It was also the source of every critical finding.
 
-✅ **All builds successful** (0 TypeScript errors)
+Removed: `next-mdx-enhanced`, `mdx-prism`, `@mdx-js/loader`, `@mdx-js/react`,
+`@next/mdx`, `@mapbox/rehype-prism`, `rehype`, `reading-time`,
+`remark-autolink-headings`, `remark-capitalize`, `remark-code-titles`,
+`remark-slug`, and `utils/title-style.js` (its only consumer).
 
-- Initial migration build: Success
-- Each security upgrade validated: Success
-- Final state: All pages compile correctly with Turbopack
+This eliminated the critical `loader-utils` prototype pollution, the high
+`prismjs` XSS/ReDoS findings, and the `cross-spawn` ReDoS chain.
 
-## Recommendations
+## Removed: unused dependencies
 
-### For Production Deployment
+Nothing in `pages/`, `components/`, `styles/`, or `scripts/` imported these:
 
-The application is **stable and production-ready**:
+`firebase`, `firebase-admin`, `googleapis`, `unsplash-js`, `swr`, `big.js`,
+`comma-number`, `date-fns`, `react-tweet-embed`, `iframe-resizer-react`,
+`start`, `babel-plugin-import-glob-array`, `patch-package`,
+`postinstall-postinstall`, `globby`.
 
-- 78% reduction in vulnerabilities (119 → 26)
-- Modern React/Next.js stack with long-term support
-- All critical runtime vulnerabilities addressed
-- Remaining 26 are mostly dev-only or bundled dependencies without replacement paths
+The `postinstall: patch-package` script was also dropped — there was no
+`patches/` directory for it to apply.
 
-### For Further Vulnerability Reduction (Optional)
+## Upgrades
 
-If targeting zero vulnerabilities is required:
+| Package           | From    | To      |
+| ----------------- | ------- | ------- |
+| next              | 16.0.7  | 16.3.0  |
+| react / react-dom | 18.2.0  | 18.3.1  |
+| @chakra-ui/react  | 2.10.9  | 2.10.10 |
+| @chakra-ui/icons  | 2.0.x   | 2.2.4   |
+| @emotion/react    | 11.11.0 | 11.14.0 |
+| @emotion/styled   | 11.11.0 | 11.14.1 |
+| framer-motion     | 7.10.3  | 12.43.0 |
+| next-seo          | 4.5.0   | 6.8.0   |
+| next-google-fonts | 1.1.0   | 2.2.0   |
+| fathom-client     | 3.0.0   | 3.7.2   |
+| sass              | 1.94.2  | 1.102.0 |
+| eslint            | 6.8.0   | 9.39.5  |
+| prettier          | 2.0.5   | 3.9.6   |
+| lint-staged       | 10.1.2  | 17.3.0  |
 
-1. **Replace next-mdx-enhanced** with native @next/mdx (low effort, high impact)
+## Compatibility fixes required by the upgrades
 
-   - Would eliminate critical loader-utils and high-severity prismjs
-   - Requires updating next.config.js MDX configuration
-   - May require refactoring front matter processing
+1. **`next-seo` v7 → pinned to v6.8.0.** v7 moved Pages Router support to
+   `next-seo/pages` and replaced the `<NextSeo>` / `<DefaultSeo>` components
+   with a `generateNextSeo()` / `generateDefaultSeo()` generator API. Adopting
+   v7 would mean rewriting the SEO wiring in `_app.js` and `projects.js`.
+   v6.8.0 keeps the component API byte-for-byte while still satisfying the
+   React 18 / Next 16 peers, which is what removed the `--legacy-peer-deps`
+   requirement.
 
-2. **Replace mdx-prism** with modern syntax highlighting
+2. **`next-google-fonts` default export removed in v2.** v2.2.0 exports only a
+   named `GoogleFonts`, so `import GoogleFonts from "next-google-fonts"`
+   resolved to the module object and threw React error #130 during
+   prerendering. Fixed in `pages/_document.js`:
+   `import { GoogleFonts } from "next-google-fonts";`
 
-   - Use `rehype-pretty-code` or `shikjs` instead
-   - Would eliminate remaining prismjs vulnerabilities
+3. **Prettier 3 made `format()` async.** `scripts/generate-sitemap.js` called it
+   synchronously; it now awaits the result.
 
-3. **Update ESLint to v9.x** (medium effort)
-   - Would resolve dot-prop, semver, tmp vulnerabilities
-   - May require config file updates
+4. **`globby` v12+ is ESM-only** and `generate-sitemap.js` is CommonJS. Replaced
+   the glob with a small recursive `fs.readdirSync` walk that reproduces the
+   original `pages/**/*{.js,.mdx}` pattern (excluding `pages/_*.js` and
+   `pages/api`).
 
-### Security Posture
+5. **ESLint 9 flat config.** The repo had **no ESLint config file at all**, so
+   `npm run lint` had never worked. Added `eslint.config.mjs` extending
+   `eslint-config-next/core-web-vitals`, replacing the abandoned
+   `eslint-config-get-off-my-lawn` (which was installed but never referenced,
+   and carried the high-severity `dot-prop` / `semver` / `tmp` findings). The
+   `--ext` CLI flag no longer exists in flat config, so the script is now
+   plain `eslint .`. Fixed 4 `react/no-unescaped-entities` errors in
+   `pages/index.js` and `pages/404.js`.
 
-- **Critical vulnerabilities**: Fixed (1 → 0)
-- **High vulnerabilities**: Reduced (63 → 18)
-- **Moderate vulnerabilities**: Reduced (9 → 3)
-- **Low vulnerabilities**: Reduced (47 → 4)
+## Intentionally held back
 
-## Installation & Development
+| Package           | Current | Latest | Why                                                                                                                                                 |
+| ----------------- | ------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| @chakra-ui/react  | 2.10.10 | 3.36.1 | v3 is a breaking rewrite: `ChakraProvider`'s `theme` prop, `useColorMode`, and the styling system all change. Amounts to a redesign.                |
+| react / react-dom | 18.3.1  | 19.2.8 | Chakra v2 is not officially tested against React 19. 18.3.1 is the terminal 18.x and is fully supported by Next 16. Tied to the Chakra v3 decision. |
+| next-seo          | 6.8.0   | 7.3.0  | v7 requires migrating to the generator API (see above).                                                                                             |
+| framer-motion     | 12.43.0 | 13.0.0 | Only present as a Chakra v2 peer; nothing imports it directly. v12 is the well-tested pairing.                                                      |
+| eslint            | 9.39.5  | 10.8.1 | `eslint-config-next@16.3.0` bundles `typescript-eslint@8` and `eslint-plugin-react-hooks@7`, whose ESLint 10 support is not yet established.        |
+
+## Repo hygiene
+
+- `.next/` was **committed to git** (603 files). Removed from the index and
+  added to `.gitignore`, along with `out/`, `.env*.local`, `.vercel`, and
+  `.DS_Store`.
+- Added `.prettierignore` so Prettier no longer rewrites build output or the
+  legacy static site in `assets/` and `images/`.
+- Dropped `git add` from the `lint-staged` config (unnecessary since
+  lint-staged v10).
+
+## Verification
 
 ```bash
-# Install with peer dependency overrides
-npm install --legacy-peer-deps
-
-# Build for production
-npm run build
-
-# Check vulnerabilities
-npm audit
-
-# Development server (if needed)
-npm run dev
+npm ci          # clean install from lockfile, no flags → 0 vulnerabilities
+npm audit       # found 0 vulnerabilities
+npm run lint    # 0 errors, 1 advisory warning (next/image)
+npm run build   # ✓ compiled; all 4 routes prerendered
+npm start       # smoke-tested /, /projects, /404
 ```
 
-## Migration Notes
+Runtime smoke test confirmed against the production server: pages return
+200/404 as expected, Emotion style blocks and the Chakra color-mode script are
+present, and `DefaultSeo` emits title, description, robots, canonical, and
+`og:*` tags.
 
-- ✅ No breaking changes to application functionality
-- ✅ All components compile and render correctly
-- ✅ Color mode toggle works (Chakra v2 ColorModeScript)
-- ✅ Styling system intact (Emotion v11 CSS-in-JS)
-- ✅ Next.js 16 Turbopack bundler works correctly
-- ⚠️ Legacy peer dependency flag required (for next-seo compatibility with React 18)
+## Known issues (pre-existing, not introduced here)
 
-## Conclusion
+1. **The Google Fonts `<link>` never reaches the document.** In
+   `pages/_document.js`, `<GoogleFonts>` renders as a direct child of `<html>`
+   rather than inside `<Head>`, so Next drops it. Verified against the
+   previously committed build output — the Inter stylesheet was already absent
+   before this work, so the site has been falling back to system fonts. Fixing
+   it would visibly change typography, so it was left alone.
+   `next-google-fonts` is also deprecated: Next.js optimizes Google Fonts
+   automatically, so the correct fix is a plain `<link rel="stylesheet">` inside
+   `<Head>` (or `next/font`) and dropping the package.
 
-Successfully completed comprehensive modernization of the portfolio application. The upgrade path (Option C) provides:
+2. **Sitemap generation never runs.** `scripts/generate-sitemap.js` is invoked
+   from the `webpack()` hook in `next.config.js`, but the build uses Turbopack,
+   which never calls it. The script also hard-codes the same `<loc>` for every
+   page, so its output would be wrong if it did run. Left as-is; moving it to a
+   `prebuild` script would make it execute, which is a behavior change.
 
-- ✅ Modern, supported technology stack
-- ✅ Significant security improvements (78% reduction)
-- ✅ Maintained application stability throughout migration
-- ✅ Foundation for future feature development
+3. **`pages/404.js` uses the legacy `<Link passHref>` + `<Button as="a">`
+   pattern**, which nests an `<a>` inside Next 13+'s own `<a>`. `components/Nav.js`
+   was already fixed for this in commit `a082253`; `404.js` was missed. It
+   builds and renders, but the markup is invalid.
 
-The remaining 26 vulnerabilities are primarily in:
+4. **`package.json` metadata** still lists `author.url` as
+   `https://joshjacobsonmusic.com` and `repository.url` as
+   `https://github.com/fslauq/`, both leftovers from the original fork.
 
-- Bundled old dependencies (next-mdx-enhanced, mdx-prism)
-- Dev-only ESLint tools with no breaking-change fixes
-
-These would require architectural changes or major package replacements to fully resolve, which is beyond the scope of a security maintenance release.
+5. **`components/ProjectCard.js:43`** uses a raw `<img>`; ESLint advises
+   `next/image`. Left as a warning since swapping it changes layout behavior.

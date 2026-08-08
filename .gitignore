@@ -1,2 +1,7 @@
 node_modules
+.next
+out
+.DS_Store
 assets/.DS_Store
+.env*.local
+.vercel
