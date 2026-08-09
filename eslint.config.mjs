@@ -18,8 +18,11 @@ export default defineConfig([
     // keeps the redundant-but-harmless `import React` in place; it is not worth
     // a warning on every file under the modern JSX transform.
     rules: {
+      // Error rather than warn: `eslint .` does not fail on warnings, so a
+      // warn-level rule reports into a void. Currently zero violations, so
+      // this costs nothing today and gates from here on.
       "no-unused-vars": [
-        "warn",
+        "error",
         {
           args: "after-used",
           argsIgnorePattern: "^_",

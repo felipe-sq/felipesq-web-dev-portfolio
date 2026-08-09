@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Formats staged files and holds the voice rules at the moment copy is written,
+# rather than waiting for a build to fail later.
+#
+# Enable once per machine:  git config core.hooksPath scripts/git-hooks
+# Skip once (rarely needed): git commit --no-verify
+set -u
+
+if ! command -v node >/dev/null 2>&1; then
+  # No Node on this machine: can't run any of this, so let the commit through
+  # rather than block it. The build still gates via prebuild.
+  echo "· node not found, skipping pre-commit checks" >&2
+  exit 0
+fi
+
+# Prettier over staged files only. Re-stages what it rewrites, so the commit
+# contains the formatted version rather than leaving a dirty tree behind.
+#
+# lint-staged has been configured in package.json for a long time with no hook
+# installed to call it, which meant it never ran. This file is that hook.
+npx --no-install lint-staged || exit 1
+
+# The copy rules run over the whole repo, not only staged files: an em-dash
+# budget is a property of the repo, and a violation can be introduced by
+# deleting the line that offset it.
+node scripts/check-copy.js || exit 1
+
+exit 0
