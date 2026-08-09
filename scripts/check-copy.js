@@ -1,7 +1,10 @@
 // Fails the build when user-facing copy drifts back toward reading as
-// machine-written. The rules it enforces live in ~/.claude/felipesq-master-context.md
-// §13a; this script is the mechanical half of them, so the two are meant to be
-// kept in step.
+// machine-written. The rules it enforces live in ~/ai-os/context/voice.md; this
+// script is the mechanical half of them, so the two are meant to be kept in step.
+//
+// The rules were promoted out of felipesq-master-context.md §13a during the ai-os
+// consolidation, because the tell travels with the writing rather than with one
+// website. voice.md is the source now; §13a no longer exists.
 //
 // Two things are checked, over two different kinds of source:
 //
@@ -35,7 +38,7 @@ const PROSE_FILES = [
 // somewhere, and say where in a comment rather than letting the number creep.
 const MAX_EM_DASHES = 0;
 
-// From §13a. Each entry is [label, regex]. Kept as word-boundary matches so
+// From voice.md. Each entry is [label, regex]. Kept as word-boundary matches so
 // "landscape" fires and "landscapes.png" does not.
 const BANNED = [
   [
@@ -155,6 +158,6 @@ for (const f of banned) {
 }
 
 console.error(
-  "\n  Rules and rationale: ~/.claude/felipesq-master-context.md §13a",
+  "\n  Rules and rationale: ~/ai-os/context/voice.md",
 );
 process.exit(1);
