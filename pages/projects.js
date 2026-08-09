@@ -8,7 +8,7 @@ import siteConfig from "../site.config";
 const url = `${siteConfig.siteUrl}/projects`;
 const title = "Project Files | Felipe Slaughter-Quintero";
 const description =
-  "Independent projects by Felipe Slaughter-Quintero, software engineer — React, Next.js, TypeScript, Node, and AI integrations.";
+  "Independent projects by Felipe Slaughter-Quintero, software engineer. React, Next.js, TypeScript, Node, and AI integrations.";
 
 const Projects = () => {
   const { colorMode } = useColorMode();
@@ -68,9 +68,9 @@ const Projects = () => {
               Since 2022 I&apos;ve worked as a software engineer, currently for
               a large enterprise technology organization. That work is
               production React, Next.js, and TypeScript against an established
-              design system — Material UI theming and component variants,
-              GraphQL and REST integrations, Azure and Cosmos DB, headless CMS
-              content, SSR and CSR tradeoffs, dependency and framework upgrades,
+              design system: Material UI theming and component variants, GraphQL
+              and REST integrations, Azure and Cosmos DB, headless CMS content,
+              SSR and CSR tradeoffs, dependency and framework upgrades,
               accessibility and focus behavior, and CodeQL findings. It
               isn&apos;t public, which is why it isn&apos;t listed below.
             </Text>
@@ -82,7 +82,7 @@ const Projects = () => {
               Express, and PostgreSQL back end when the data calls for it. I
               reach for TypeScript on anything large enough to earn it, deploy
               on Vercel, and treat accessibility as part of building rather than
-              a pass at the end — labeled controls, working keyboard navigation,
+              a pass at the end: labeled controls, working keyboard navigation,
               and color that clears WCAG contrast in both light and dark modes.
             </Text>
             <Heading size="md" as="h2" mb={2} fontWeight="medium">
@@ -91,8 +91,8 @@ const Projects = () => {
             <Text color={secondaryTextColor[colorMode]} mb={4}>
               Two directions, both built on the same foundation rather than
               replacing it: Shopify and e-commerce development, and AI
-              integration work — LLM APIs connected to real workflows, with the
-              architecture and access controls that implies.
+              integration work, meaning LLM APIs connected to real workflows
+              with the architecture and access controls that implies.
             </Text>
           </Flex>
           <Flex

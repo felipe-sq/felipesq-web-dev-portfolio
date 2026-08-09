@@ -98,7 +98,7 @@ const Index = () => {
           </Text>
           <Text color={secondaryTextColor[colorMode]} mb={4}>
             I also hold a BBA, and I&apos;ve spent years on the commercial side
-            of the web — conversion, landing pages, lifecycle email, offer
+            of the web: conversion, landing pages, lifecycle email, offer
             positioning. It means I tend to ask what a feature is meant to
             accomplish, and for whom, before I ask how to build it. Accessible,
             fast, maintainable software and software that actually moves a
