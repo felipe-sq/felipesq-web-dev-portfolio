@@ -21,14 +21,15 @@
   },
   "packageManager": "npm@11.11.1",
   "scripts": {
-    "prebuild": "node scripts/generate-sitemap.js",
+    "prebuild": "node scripts/generate-sitemap.js && npm run check:copy",
     "build": "next build",
     "dev": "next dev",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --write \"**/*.{js,mjs,json,md,mdx,yml,scss,css}\"",
     "start": "next start",
-    "test": "npm run lint"
+    "test": "npm run lint && npm run check:copy",
+    "check:copy": "node scripts/check-copy.js"
   },
   "lint-staged": {
     "*.{js,mjs,json,md,mdx,yml,scss,css}": [

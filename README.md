@@ -58,15 +58,30 @@ npm run dev
 
 ## Available scripts
 
-| Script             | What it does                                           |
-| ------------------ | ------------------------------------------------------ |
-| `npm run dev`      | Start the Next.js dev server                           |
-| `npm run build`    | Create an optimized production build                   |
-| `npm start`        | Serve the production build (run `npm run build` first) |
-| `npm run lint`     | Lint with ESLint 9 (flat config, `eslint.config.mjs`)  |
-| `npm run lint:fix` | Lint and auto-fix what can be fixed                    |
-| `npm run prettier` | Format source files with Prettier 3                    |
-| `npm test`         | Alias for `npm run lint`                               |
+| Script               | What it does                                           |
+| -------------------- | ------------------------------------------------------ |
+| `npm run dev`        | Start the Next.js dev server                           |
+| `npm run build`      | Create an optimized production build                   |
+| `npm start`          | Serve the production build (run `npm run build` first) |
+| `npm run lint`       | Lint with ESLint 9 (flat config, `eslint.config.mjs`)  |
+| `npm run lint:fix`   | Lint and auto-fix what can be fixed                    |
+| `npm run prettier`   | Format source files with Prettier 3                    |
+| `npm run check:copy` | Check user-facing copy for AI-sounding prose           |
+| `npm test`           | Lint, then check copy                                  |
+
+## Copy checks
+
+`scripts/check-copy.js` guards the prose a visitor actually reads: the card
+descriptions and case studies in `data/projects.js`, plus the page copy and SEO
+metadata. It fails on em-dashes over budget and on a list of constructions that
+read as machine-written.
+
+It runs in `npm test` and again in `prebuild`, so a deploy cannot ship copy that
+fails it. Comments are stripped before scanning, because they are not
+user-facing.
+
+The rules and the reasoning behind them live in the Master Context Prompt at
+`~/.claude/felipesq-master-context.md` §13a. If you change one, change the other.
 
 ## Project structure
 
