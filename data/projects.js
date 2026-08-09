@@ -362,6 +362,74 @@ const projects = [
       ],
     },
   },
+  {
+    id: "shopify-collection-grid",
+    title: "Shopify Collection Grid",
+    description:
+      "A custom collection grid for a Shopify theme, built on my own development store. Dawn ships one rectangular product card shared across the collection page, search, the homepage, and related products. This replaces it on a single collection with a notched-silhouette card, a staggered four-column layout, and a hover reveal, without modifying a single base theme file and without losing the faceted filtering, sorting, or pagination the theme already had. Liquid and CSS only, no JavaScript.",
+    repoHref: "https://github.com/felipe-sq/bike-shack-ai",
+    initials: "CG",
+    accent: "#446d0f",
+    stack: [
+      "Shopify",
+      "Liquid",
+      "Dawn 15.4.1",
+      "CSS",
+      "SVG clip-path",
+      "Shopify CLI",
+    ],
+    caseStudy: {
+      summary:
+        "A self-directed build on my own Shopify development store, using a supplied reference design. The interesting constraint was never the visual target. It was adding a card with a non-rectangular silhouette to a stock Dawn theme without touching a base theme file, and without giving up the faceted filtering the theme already had.",
+      problem: [
+        "Dawn's collection grid is a rectangular product card, and the files that build it are shared by the collection page, search results, the homepage, and related products. The build called for something different on one collection: cards with a notched silhouette carving out a corner for the product title, four columns with the second and fourth offset downward so rows do not line up, and a hover state sweeping a second lifestyle image in behind a growing ellipse. The visual target came from landonorris.com, supplied in the brief as a reference for the specific changes wanted. The work here is the Shopify implementation, not the design.",
+        "The obvious approach is to edit main-collection-product-grid.liquid and card-product.liquid. Both are load-bearing in four places. Editing them to change one collection means testing four surfaces on every future theme update and owning that risk permanently.",
+      ],
+      constraints: [
+        "Stock Dawn 15.4.1: fifty-four sections and roughly thirty-five web components already registered. Filtering and sorting were already switched on for the collection and had to keep working. No base theme file could be modified. The theme defines exactly two breakpoints, 750px and 990px, so introducing a third would mean a new convention to maintain forever.",
+        "Section settings follow a CMS philosophy rather than a page-builder one: content controls a merchant would use, not pixel-level design controls. The feature had to be revertable without a code change. And although this is a development store with no customers, I treated it as a live storefront throughout, including never editing the published theme, because the workflow was half the point of the exercise.",
+      ],
+      approach: [
+        "I read the integration surface before designing anything around it. assets/facets.js turned out to need exactly three DOM hooks: #ProductGridContainer, an inner .collection wrapper, and #product-grid carrying a data-id. A custom section can reproduce those. That one finding decided the architecture, because it meant a fully custom grid did not have to trade away filtering.",
+        "So the feature became a new section on its own template. sections/section-modern-grid.liquid and assets/section-modern-grid.css, rendered by a new templates/collection.modern-grid.json assigned to one collection. Dawn's files stay untouched. Assigning the template switches the feature on and unassigning it is the complete revert, with no code change in either direction.",
+        "Reading config/settings_data.json before designing the color saved a setting entirely. The theme's scheme-1 already carried a near-black background and a neon lime button color effectively identical to the reference accent. Dawn exposes those as RGB triplets, so the outline could reference the existing scheme and no color picker was introduced anywhere.",
+      ],
+      implementation: [
+        "Three new files and no modified ones: 349 lines of Liquid, 292 of CSS, plus the template JSON.",
+        "No JavaScript. The plan originally listed a web component, and every behavior resolved without one. The hover reveal is :hover, the focus ring is :focus-visible, the stagger is nth-child, filtering is Dawn's existing facets.js, and the accent applied to a trailing model year is Liquid string parsing. Shipping an empty component would have been overhead with a permanent maintenance cost.",
+        "The notched silhouette is a single SVG path used twice, once as the visible outline and once as a clip-path on the media area. The stagger uses translateY with a margin-bottom compensation on the grid rather than padding, because padding inflates the row pitch to card plus offset plus gap, while the reference layout has rows genuinely overlapping at card plus gap.",
+        "Four columns start at 990px rather than Dawn's 750px. Dawn can switch earlier because its titles wrap below the card; here the title sits in a fixed-width notch, and the 750 to 990 range produces cards between 132px and 193px wide where even two-word titles clip. 990px was already a theme breakpoint, so nothing new was introduced.",
+      ],
+      challenges: [
+        'facets.js has no null guards on any of its three hooks. A missing hook throws rather than degrading, and the hooks have to exist in the empty state too. That is why Dawn puts id="product-grid" and data-id on its empty-state div, which is easy to miss until filtering to zero results breaks the page.',
+        "The clip-path definitions vanished after filtering. facets.js replaces the innerHTML of #ProductGridContainer, taking any defs inside it along with the cards. Anything referenced by clip-path: url() has to live outside that element.",
+        'Sharing the outline through symbol and use did not survive being stretched. preserveAspectRatio="none" does not inherit reliably through a use element, so the path is inlined per card instead. It gzips away.',
+        'Mobile downloaded a hover image it can never display: three images, roughly 190KB, at a 390px viewport. loading="lazy" is not sufficient when an image is laid out at full size and hidden only by clip-path, because clipping is a paint operation the lazy-loading heuristic does not account for.',
+        "The focus ring painted a rectangle around a notched card. Dawn's *:focus-visible sets both outline and box-shadow, and the section suppressed only outline, so the box-shadow kept drawing a rectangle that ignored the silhouette entirely. Focus was also pixel-identical to hover, both a 1.5px recolored stroke, which fails the 2px perimeter that WCAG 2.2 SC 2.4.11 asks for even though the contrast was already far past the minimum.",
+        "Titles truncated at every four-column viewport below roughly 1250px, because the notch is a percentage of the card while the type is a fixed size.",
+        "One reported bug was not a bug. Cards appeared unreachable by keyboard in Safari, which excludes links from the Tab sequence unless a setting in Advanced preferences is enabled. The cards are anchors and were correctly focusable the whole time, which Chrome confirmed: a real Tab press landed on the first card at position 22 of 51 focusable elements.",
+        "The headline effect looked dead for a while. The hover reveal needs a second product image, and the collection held four Dawn sample products with one image each while the real products with lifestyle shots sat outside it. The bug was collection membership, not code and not missing content.",
+      ],
+      solution: [
+        "The notch widened from 35 percent to 51 percent of card width by changing one absolute coordinate in the SVG path, which preserved the corner radii and the diagonal angle, and the four-column breakpoint moved to 990px.",
+        "The wasted mobile download was fixed with a picture element plus a source gated on (hover: hover) and an inline 1x1 GIF fallback, so a device with no hover never requests the file at all.",
+        "Suppressing Dawn's focus ring meant killing both outline and box-shadow, then drawing the focus state on the silhouette path itself and thickening it to 3px so focus is distinguishable from hover and clears the perimeter requirement.",
+        "The localization problem resolved by reusing Dawn's existing keys rather than minting new ones. Introducing custom keys took theme check from 2 errors to 241, because each new key reports as missing in all fifty locales. Reuse brought it back to 40.",
+      ],
+      outcome: [
+        "The grid runs on the development store with filtering, sorting, pagination, the zero-result empty state, recovery from that empty state, and browser back and forward all verified working. No base theme file was modified, and the feature reverts by unassigning a single template.",
+        "Two QA rounds found two real defects, both caught by measurement rather than by looking at the page.",
+        "The honest limits: this is a personal development store with no customers, so there are no performance or conversion numbers to report. Two touch-device checks remain outstanding because I had no physical device to test on. The cards carry no price or sold-out indicator, and the hover reveal is invisible to touch users by design.",
+      ],
+      learned: [
+        'Read the integration surface before designing around it. Twenty minutes inside facets.js established that filtering needed three DOM hooks, which turned "custom grid or working filters, pick one" into a question that did not need asking. Designing first would most likely have produced a grid that silently broke filtering.',
+        "Measure rather than inspect. Both real defects were invisible by eye: the truncation only appears inside a specific viewport band, and the wasted image download only shows up in the network panel. A related trap caught me mid-build, because reading a transitioned CSS property synchronously returns the start value, which produced a confident and completely wrong diagnosis until I re-measured a frame later.",
+        "Reversibility is a design decision, not a cleanup step. Putting the section on its own template made the rollback an admin toggle instead of a revert commit against four shared surfaces.",
+        "A browser default is not a defect. Checking Safari's behavior before debugging saved a day of hunting for a focus bug that did not exist.",
+        "Conventions are worth reading out of the code rather than assuming from documentation. This theme's section padding uses a 0.75 mobile multiplier across 32 of its 54 sections, and Dawn's .grid is flexbox with percentage widths rather than CSS Grid despite the name. Both would have been wrong guesses.",
+      ],
+    },
+  },
 ];
 
 module.exports = { projects, CASE_STUDY_SECTIONS };
